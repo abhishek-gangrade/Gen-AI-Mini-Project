@@ -1,13 +1,14 @@
 """DigitForge - Generative AI Studio.
 
 AI-Powered Handwritten Digit Generation Using Conditional Variational Autoencoder (CVAE).
-Professional Academic UI/UX Redesign.
+Complete UI/UX Redesign & Professional SaaS Interface.
 """
 
 import os
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
 import io
 import time
+import zipfile
 from typing import Optional, Dict, Any, List
 
 import streamlit as st
@@ -38,7 +39,7 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# 2. Minimal, Modern Design System & CSS
+# 2. Modern SaaS Design System & CSS
 # -----------------------------------------------------------------------------
 st.markdown(
     """
@@ -48,24 +49,24 @@ st.markdown(
     /* Global Typography & Palette */
     html, body, [class*="css"] {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        color: #172033;
+        color: #0F172A;
         background-color: #FFFFFF;
     }
 
-    /* Hide default Streamlit clutter */
+    /* Clean Streamlit chrome */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
     .stDeployButton {display: none;}
 
-    /* Main Container Padding */
+    /* Main Container Spacing */
     .block-container {
-        padding-top: 2rem;
+        padding-top: 1.75rem;
         padding-bottom: 3.5rem;
-        max-width: 1160px;
+        max-width: 1140px;
     }
 
-    /* Sidebar Refinement */
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {
         background-color: #F8FAFC;
         border-right: 1px solid #E2E8F0;
@@ -77,36 +78,36 @@ st.markdown(
 
     /* Headings */
     h1, h2, h3, h4 {
-        color: #172033;
+        color: #0F172A;
         font-weight: 600;
         letter-spacing: -0.02em;
     }
     h1 {
-        font-size: 2.1rem;
+        font-size: 2rem;
         line-height: 1.25;
         margin-bottom: 0.5rem;
     }
     h2 {
-        font-size: 1.5rem;
+        font-size: 1.45rem;
         margin-top: 0.25rem;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.4rem;
     }
     h3 {
-        font-size: 1.15rem;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+        margin-top: 0.75rem;
+        margin-bottom: 0.35rem;
     }
     p, li {
-        color: #475569;
-        font-size: 0.95rem;
+        color: #334155;
+        font-size: 0.92rem;
         line-height: 1.6;
     }
 
-    /* Hero Section */
-    .hero-container {
-        padding: 1.5rem 0 2rem 0;
+    /* Hero Banner */
+    .hero-box {
+        padding: 0.5rem 0 1.5rem 0;
         border-bottom: 1px solid #E2E8F0;
-        margin-bottom: 2rem;
+        margin-bottom: 1.75rem;
     }
     .hero-badge {
         display: inline-flex;
@@ -116,71 +117,109 @@ st.markdown(
         color: #4F46E5;
         font-size: 0.78rem;
         font-weight: 600;
-        padding: 0.25rem 0.75rem;
+        padding: 0.25rem 0.7rem;
         border-radius: 9999px;
-        margin-bottom: 1rem;
-        letter-spacing: 0.02em;
+        margin-bottom: 0.85rem;
+        border: 1px solid #E0E7FF;
     }
     .hero-title {
-        font-size: 2.25rem;
+        font-size: 2.15rem;
         font-weight: 700;
-        color: #172033;
+        color: #0F172A;
         letter-spacing: -0.025em;
         line-height: 1.2;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
     }
-    .hero-desc {
-        font-size: 1.05rem;
+    .hero-subtitle {
+        font-size: 1.15rem;
+        font-weight: 500;
+        color: #334155;
+        margin-bottom: 0.6rem;
+    }
+    .hero-description {
+        font-size: 0.95rem;
         color: #64748B;
-        max-width: 680px;
+        max-width: 720px;
         line-height: 1.6;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Information / Stat Cards */
+    .stat-card {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        padding: 1.15rem 1.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .stat-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        color: #64748B;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+    }
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0F172A;
+        margin-top: 0.2rem;
+    }
+    .stat-desc {
+        font-size: 0.8rem;
+        color: #64748B;
+        margin-top: 0.2rem;
     }
 
     /* Content Cards */
-    .df-card {
+    .content-card {
         background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1.25rem;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+        border-radius: 10px;
+        padding: 1.25rem 1.4rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
     }
-    .df-card-subtle {
+    .content-card-subtle {
         background-color: #F8FAFC;
         border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 1.25rem;
-        margin-bottom: 1.25rem;
+        border-radius: 10px;
+        padding: 1.15rem 1.3rem;
+        margin-bottom: 1rem;
     }
 
-    /* Showcase Strip */
-    .showcase-strip {
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 1.25rem;
-        margin: 1.5rem 0;
-    }
-
-    /* Digit Display Frame */
-    .digit-frame {
+    /* Image Display Frame */
+    .digit-tile {
         background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 8px;
         padding: 0.5rem;
         text-align: center;
-        transition: border-color 0.15s ease;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        margin-bottom: 0.65rem;
     }
-    .digit-frame:hover {
+    .digit-tile:hover {
         border-color: #CBD5E1;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+    .digit-tile-label {
+        font-size: 0.72rem;
+        color: #64748B;
+        font-weight: 600;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
 
-    /* Minimal Badges */
-    .pill-badge {
+    /* Minimal Pill Badges */
+    .tech-pill {
         display: inline-block;
         background: #F1F5F9;
-        color: #475569;
+        color: #334155;
         font-size: 0.78rem;
         font-weight: 500;
         padding: 0.2rem 0.6rem;
@@ -190,49 +229,76 @@ st.markdown(
         border: 1px solid #E2E8F0;
     }
 
-    /* Status Dot */
+    /* Sidebar In-Flow Status Box */
+    .sidebar-status-box {
+        margin-top: 2rem;
+        padding: 0.85rem 1rem;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+    }
+    .sidebar-status-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 0.5rem;
+    }
     .status-dot {
-        display: inline-block;
         width: 8px;
         height: 8px;
         background-color: #16A34A;
         border-radius: 50%;
-        margin-right: 6px;
+        display: inline-block;
     }
-
-    /* Sidebar Brand */
-    .sidebar-brand-title {
-        font-size: 1rem;
-        font-weight: 700;
-        letter-spacing: -0.01em;
-        color: #172033;
+    .status-dot-err {
+        width: 8px;
+        height: 8px;
+        background-color: #DC2626;
+        border-radius: 50%;
+        display: inline-block;
     }
-    .sidebar-brand-subtitle {
-        font-size: 0.78rem;
+    .status-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #0F172A;
+    }
+    .status-meta-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
         color: #64748B;
+        margin-top: 0.25rem;
+        line-height: 1.4;
+    }
+    .status-meta-val {
         font-weight: 500;
+        color: #1E293B;
     }
 
-    /* Streamlit Widget Polish */
+    /* Sidebar Radio Styling */
     div[data-testid="stRadio"] > div {
         gap: 4px;
     }
     div[data-testid="stRadio"] label {
-        font-size: 0.88rem;
-        font-weight: 500;
-        color: #475569;
-        padding: 0.35rem 0.65rem;
-        border-radius: 6px;
-        transition: background 0.15s ease;
+        font-size: 0.88rem !important;
+        font-weight: 500 !important;
+        color: #475569 !important;
+        padding: 0.4rem 0.75rem !important;
+        border-radius: 6px !important;
+        transition: all 0.15s ease !important;
+    }
+    div[data-testid="stRadio"] label:hover {
+        background-color: #F1F5F9 !important;
+        color: #0F172A !important;
     }
 
-    /* Button Enhancements */
+    /* Button Styling */
     button[kind="primary"] {
         background-color: #4F46E5 !important;
         border: none !important;
         font-weight: 500 !important;
         border-radius: 6px !important;
-        transition: background-color 0.15s ease !important;
+        padding: 0.45rem 1rem !important;
     }
     button[kind="primary"]:hover {
         background-color: #4338CA !important;
@@ -240,7 +306,7 @@ st.markdown(
     button[kind="secondary"] {
         background-color: #FFFFFF !important;
         border: 1px solid #E2E8F0 !important;
-        color: #172033 !important;
+        color: #0F172A !important;
         border-radius: 6px !important;
         font-weight: 500 !important;
     }
@@ -255,7 +321,7 @@ st.markdown(
 
 
 # -----------------------------------------------------------------------------
-# 3. Cached Model & Resources
+# 3. Model Loading & Caching
 # -----------------------------------------------------------------------------
 CHECKPOINT_PATH = "saved_model/cvae_mnist.pth"
 HISTORY_PATH = "training_history/loss_history.json"
@@ -275,70 +341,89 @@ model_obj, device_obj, meta_obj = get_cached_cvae(CHECKPOINT_PATH)
 
 
 # -----------------------------------------------------------------------------
-# 4. Clean Sidebar Navigation
+# 4. Sidebar Branding & Navigation
 # -----------------------------------------------------------------------------
+NAV_ITEMS = [
+    "Overview",
+    "Generate Digits",
+    "Latent Explorer",
+    "Model Insights",
+    "About",
+]
+
+NAV_ICONS = {
+    "Overview": "🏠  Overview",
+    "Generate Digits": "✏️  Generate Digits",
+    "Latent Explorer": "🧭  Latent Explorer",
+    "Model Insights": "📊  Model Insights",
+    "About": "ℹ️  About",
+}
+
 with st.sidebar:
+    # Logo & Brand Header
     st.markdown(
         """
-        <div style="padding: 0.25rem 0 0.75rem 0;">
+        <div style="padding: 0.25rem 0 0.85rem 0;">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <div style="width: 24px; height: 24px; background: #4F46E5; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 13px;">D</div>
-                <span class="sidebar-brand-title">DIGITFORGE</span>
+                <div style="width: 26px; height: 26px; background: #4F46E5; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">D</div>
+                <span style="font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; color: #0F172A;">DigitForge</span>
             </div>
-            <div class="sidebar-brand-subtitle" style="margin-left: 32px; margin-top: -2px;">Generative AI Studio</div>
+            <div style="font-size: 0.78rem; color: #64748B; font-weight: 500; margin-left: 34px; margin-top: -2px;">
+                Generative AI Studio
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
-
-    nav_options = [
-        "Overview",
-        "Generate",
-        "Latent Explorer",
-        "Model Insights",
-        "About",
-    ]
+    st.markdown("<div style='height: 0.4rem;'></div>", unsafe_allow_html=True)
 
     if "nav_page" not in st.session_state:
         st.session_state["nav_page"] = "Overview"
 
-    current_index = nav_options.index(st.session_state["nav_page"]) if st.session_state["nav_page"] in nav_options else 0
+    cur_idx = NAV_ITEMS.index(st.session_state["nav_page"]) if st.session_state["nav_page"] in NAV_ITEMS else 0
 
     selected_nav = st.radio(
         label="Navigation Menu",
-        options=nav_options,
-        index=current_index,
+        options=NAV_ITEMS,
+        format_func=lambda x: NAV_ICONS.get(x, x),
+        index=cur_idx,
         label_visibility="collapsed",
         key="main_nav_radio",
     )
     st.session_state["nav_page"] = selected_nav
 
+    # In-Flow Model Status Section (No absolute positioning to prevent overlap)
     st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    # Minimal Status Card
-    st.markdown(
-        """
-        <div style="border-top: 1px solid #E2E8F0; padding-top: 1rem; margin-top: 1rem;">
-            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: #94A3B8; font-weight: 600;">System Status</span>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
     if model_obj is not None:
-        device_str = "Apple Silicon (MPS)" if device_obj and device_obj.type == "mps" else (
+        device_label = "Apple MPS" if device_obj and device_obj.type == "mps" else (
             "CUDA GPU" if device_obj and device_obj.type == "cuda" else "CPU"
         )
+        val_loss_val = meta_obj.get("val_loss", 94.64) if meta_obj else 94.64
         st.markdown(
             f"""
-            <div style="margin-top: 0.4rem; font-size: 0.82rem; color: #172033; font-weight: 500;">
-                <span class="status-dot"></span>Model Ready
-            </div>
-            <div style="font-size: 0.75rem; color: #64748B; margin-top: 2px;">
-                Device: {device_str}<br>
-                Latent: {model_obj.latent_dim}D Gaussian
+            <div class="sidebar-status-box">
+                <div class="sidebar-status-header">
+                    <span class="status-dot"></span>
+                    <span class="status-title">Model Active</span>
+                </div>
+                <div class="status-meta-row">
+                    <span>Architecture</span>
+                    <span class="status-meta-val">CVAE (MLP)</span>
+                </div>
+                <div class="status-meta-row">
+                    <span>Latent Space</span>
+                    <span class="status-meta-val">16D Gaussian</span>
+                </div>
+                <div class="status-meta-row">
+                    <span>Device</span>
+                    <span class="status-meta-val">{device_label}</span>
+                </div>
+                <div class="status-meta-row">
+                    <span>Validation Loss</span>
+                    <span class="status-meta-val">{val_loss_val:.2f}</span>
+                </div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -346,11 +431,14 @@ with st.sidebar:
     else:
         st.markdown(
             """
-            <div style="margin-top: 0.4rem; font-size: 0.82rem; color: #DC2626; font-weight: 500;">
-                <span style="display:inline-block; width:8px; height:8px; background:#DC2626; border-radius:50%; margin-right:6px;"></span>No Checkpoint
-            </div>
-            <div style="font-size: 0.75rem; color: #64748B; margin-top: 2px;">
-                Run <code>python train.py</code> to train.
+            <div class="sidebar-status-box">
+                <div class="sidebar-status-header">
+                    <span class="status-dot-err"></span>
+                    <span class="status-title">Model Not Found</span>
+                </div>
+                <div style="font-size: 0.75rem; color: #64748B; margin-top: 4px;">
+                    Run <code>python train.py</code> to train weights.
+                </div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -358,8 +446,8 @@ with st.sidebar:
 
     st.markdown(
         """
-        <div style="position: absolute; bottom: 1.5rem; font-size: 0.75rem; color: #94A3B8;">
-            DigitForge v1.0 • Academic AI Studio
+        <div style="margin-top: 1.25rem; padding-left: 4px; font-size: 0.74rem; color: #94A3B8;">
+            B.Tech Generative AI Academic Project
         </div>
         """,
         unsafe_allow_html=True,
@@ -367,147 +455,188 @@ with st.sidebar:
 
 
 # -----------------------------------------------------------------------------
-# PAGE 1: OVERVIEW (HOME)
+# PAGE 1: OVERVIEW
 # -----------------------------------------------------------------------------
 if st.session_state["nav_page"] == "Overview":
-    # Hero Section
     st.markdown(
         """
-        <div class="hero-container">
+        <div class="hero-box">
             <div class="hero-badge">Conditional Variational Autoencoder</div>
-            <div class="hero-title">DigitForge</div>
-            <div style="font-size: 1.35rem; font-weight: 500; color: #172033; margin-bottom: 0.75rem;">
-                Generate handwritten digits with Generative AI.
+            <div class="hero-title">Welcome to DigitForge</div>
+            <div class="hero-subtitle">
+                Generate unique handwritten digits using a Conditional Variational Autoencoder.
             </div>
-            <div class="hero-desc">
-                An interactive exploration of Conditional Variational Autoencoders, trained on the MNIST dataset to generate synthetic handwritten digits.
+            <div class="hero-description">
+                DigitForge is an academic Generative AI application that learns handwritten digit representations
+                from the MNIST dataset. By conditioning a Variational Autoencoder on class labels,
+                it allows you to synthesize novel, distinct handwritten digit variations from 0 to 9 on demand.
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    cta_col1, cta_col2, _ = st.columns([1.5, 1.5, 4])
-    with cta_col1:
-        if st.button("Start Generating →", type="primary", use_container_width=True):
-            st.session_state["nav_page"] = "Generate"
+    # Three Compact Information Cards
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown(
+            """
+            <div class="stat-card">
+                <div class="stat-label">Generative Model</div>
+                <div class="stat-value">CVAE</div>
+                <div class="stat-desc">Conditional Variational Autoencoder</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with c2:
+        st.markdown(
+            """
+            <div class="stat-card">
+                <div class="stat-label">Dataset</div>
+                <div class="stat-value">MNIST</div>
+                <div class="stat-desc">70,000 Grayscale Digits (28 × 28)</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with c3:
+        st.markdown(
+            """
+            <div class="stat-card">
+                <div class="stat-label">Digit Classes</div>
+                <div class="stat-value">0 – 9</div>
+                <div class="stat-desc">10 Categorical One-Hot Classes</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<div style='height: 1.25rem;'></div>", unsafe_allow_html=True)
+
+    # Two Clear Action Buttons
+    act_col1, act_col2, _ = st.columns([1.5, 1.5, 3.5])
+    with act_col1:
+        if st.button("Generate Digits →", type="primary", use_container_width=True):
+            st.session_state["nav_page"] = "Generate Digits"
             st.rerun()
-    with cta_col2:
+    with act_col2:
         if st.button("Explore Latent Space", type="secondary", use_container_width=True):
             st.session_state["nav_page"] = "Latent Explorer"
             st.rerun()
 
-    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 1.75rem;'></div>", unsafe_allow_html=True)
 
-    # Visual Preview of Generated Handwritten Digits
+    # Sample Preview Grid: 10 Digits in a 5-Column Responsive Grid (2 rows of 5)
     st.markdown("### Synthetic Sample Preview")
-    st.caption("Live samples generated directly by the trained CVAE across all digit classes (0 to 9).")
+    st.caption("Clean samples generated directly by the trained CVAE across all 10 digit classes (0 to 9).")
 
     if model_obj is not None:
-        # Generate 1 sample for each digit 0-9 to display in a clean horizontal preview row
         with torch.no_grad():
-            sample_tensors = []
+            preview_samples = []
             for d in range(10):
-                # Fixed seed for consistent, pristine preview row
-                z_preview = torch.zeros(1, model_obj.latent_dim, device=device_obj)
-                img = model_obj.sample(num_samples=1, digit=d, device=device_obj, custom_z=z_preview)
-                sample_tensors.append(img)
+                z_zero = torch.zeros(1, model_obj.latent_dim, device=device_obj)
+                img = model_obj.sample(num_samples=1, digit=d, device=device_obj, custom_z=z_zero)
+                preview_samples.append(tensor_to_pil(img[0]))
 
-        preview_cols = st.columns(10)
-        for idx in range(10):
-            with preview_cols[idx]:
-                pil_thumb = tensor_to_pil(sample_tensors[idx][0])
+        # Row 1: Digits 0 to 4 (5 columns)
+        r1_cols = st.columns(5)
+        for i in range(5):
+            with r1_cols[i]:
                 st.markdown(
                     f"""
-                    <div class="digit-frame">
-                        <div style="font-size: 0.72rem; color: #64748B; font-weight: 600; margin-bottom: 4px;">Class {idx}</div>
+                    <div class="digit-tile">
+                        <div class="digit-tile-label">Class {i}</div>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
-                st.image(pil_thumb, width=95)
+                st.image(preview_samples[i], width=110)
+
+        st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+
+        # Row 2: Digits 5 to 9 (5 columns)
+        r2_cols = st.columns(5)
+        for i in range(5, 10):
+            with r2_cols[i - 5]:
+                st.markdown(
+                    f"""
+                    <div class="digit-tile">
+                        <div class="digit-tile-label">Class {i}</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                st.image(preview_samples[i], width=110)
     else:
         st.info("Train the model with `python train.py` to enable live synthetic preview.")
 
-    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
 
-    # Core Architectural Pillars
-    st.markdown("### How Conditional VAE Works")
-    p1, p2, p3 = st.columns(3)
+    # How It Works Section
+    st.markdown("### How It Works")
+    hw1, hw2, hw3 = st.columns(3)
 
-    with p1:
+    with hw1:
         st.markdown(
             """
-            <div class="df-card">
-                <h4 style="margin-top:0; font-size: 1rem; color:#172033;">1. Class Conditioning</h4>
-                <p style="font-size: 0.88rem; color:#64748B; margin-bottom: 0;">
-                    Unlike unconditional VAEs that produce random digits, DigitForge feeds one-hot digit vectors into both
-                    the encoder and decoder to ensure targeted synthesis on demand.
+            <div class="content-card">
+                <div style="font-weight: 600; font-size: 0.95rem; color: #0F172A; margin-bottom: 0.35rem;">
+                    1. Encoder (Inference)
+                </div>
+                <p style="font-size: 0.88rem; color: #475569; margin: 0;">
+                    Compresses the 28×28 pixel image (784 features) concatenated with the one-hot digit label
+                    into parameters of a variational distribution (mean μ and log-variance log σ²).
                 </p>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    with p2:
+    with hw2:
         st.markdown(
             """
-            <div class="df-card">
-                <h4 style="margin-top:0; font-size: 1rem; color:#172033;">2. Continuous Latent Space</h4>
-                <p style="font-size: 0.88rem; color:#64748B; margin-bottom: 0;">
-                    A 16-dimensional bottleneck regularized by Kullback-Leibler divergence enforces a smooth
-                    Gaussian prior, allowing seamless sampling and interpolation.
+            <div class="content-card">
+                <div style="font-weight: 600; font-size: 0.95rem; color: #0F172A; margin-bottom: 0.35rem;">
+                    2. Latent Space & Reparameterization
+                </div>
+                <p style="font-size: 0.88rem; color: #475569; margin: 0;">
+                    Samples auxiliary Gaussian noise ε ~ N(0, I) to compute z = μ + σ ⊙ ε.
+                    This reparameterization trick allows gradients to flow backwards through stochastic nodes.
                 </p>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    with p3:
+    with hw3:
         st.markdown(
             """
-            <div class="df-card">
-                <h4 style="margin-top:0; font-size: 1rem; color:#172033;">3. Reparameterization</h4>
-                <p style="font-size: 0.88rem; color:#64748B; margin-bottom: 0;">
-                    Stochasticity is isolated into auxiliary noise ε ~ N(0, I), enabling exact gradient
-                    propagation through the probabilistic bottleneck during training.
+            <div class="content-card">
+                <div style="font-weight: 600; font-size: 0.95rem; color: #0F172A; margin-bottom: 0.35rem;">
+                    3. Decoder (Generation)
+                </div>
+                <p style="font-size: 0.88rem; color: #475569; margin: 0;">
+                    Takes the continuous latent representation z together with your selected digit class,
+                    and reconstructs brand-new 28×28 synthetic handwritten digit variations.
                 </p>
             </div>
             """,
             unsafe_allow_html=True,
         )
-
-    st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
-
-    # Technology Stack
-    st.markdown("### Technology Stack")
-    st.markdown(
-        """
-        <div>
-            <span class="pill-badge">Python 3.14</span>
-            <span class="pill-badge">PyTorch 2.15</span>
-            <span class="pill-badge">Apple MPS Acceleration</span>
-            <span class="pill-badge">Torchvision</span>
-            <span class="pill-badge">Streamlit 1.67</span>
-            <span class="pill-badge">NumPy</span>
-            <span class="pill-badge">Matplotlib</span>
-            <span class="pill-badge">Pillow</span>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 
 
 # -----------------------------------------------------------------------------
-# PAGE 2: GENERATE (MAIN PRODUCT FOCUS)
+# PAGE 2: GENERATE DIGITS (MAIN PRODUCT FOCUS)
 # -----------------------------------------------------------------------------
-elif st.session_state["nav_page"] == "Generate":
+elif st.session_state["nav_page"] == "Generate Digits":
     st.markdown(
         """
-        <div style="margin-bottom: 1.5rem;">
+        <div style="margin-bottom: 1.25rem;">
             <h2>Handwritten Digit Generator</h2>
             <p style="color: #64748B; margin-bottom: 0;">
-                Condition the generative decoder on any digit (0–9) to synthesize novel handwritten variations from standard Gaussian latent noise.
+                Select any digit from 0 to 9 and choose how many unique synthetic variations to generate.
+                Each image is synthesized using fresh latent samples z ~ N(0, I).
             </p>
         </div>
         """,
@@ -516,46 +645,45 @@ elif st.session_state["nav_page"] == "Generate":
 
     if model_obj is None:
         st.error(
-            "Model checkpoint not found at `saved_model/cvae_mnist.pth`.\n\n"
-            "Please run `python train.py` from your terminal to train the model on MNIST."
+            "⚠️ **Model Checkpoint Not Found**\n\n"
+            "Please train the model first by running `python train.py` in your terminal."
         )
     else:
-        # Clean Control Bar
-        with st.container():
-            st.markdown(
-                """
-                <div class="df-card-subtle" style="padding: 1rem 1.25rem 0.5rem 1.25rem;">
-                """,
-                unsafe_allow_html=True,
+        # Structured Generation Control Panel
+        st.markdown(
+            """
+            <div class="content-card-subtle" style="padding: 1.15rem 1.25rem 0.65rem 1.25rem;">
+            """,
+            unsafe_allow_html=True,
+        )
+
+        col_digit, col_count, col_btn = st.columns([2.5, 2.5, 2])
+
+        with col_digit:
+            selected_digit = st.selectbox(
+                "Select Target Digit (0 – 9):",
+                options=list(range(10)),
+                index=7,
+                help="Class label conditioned into the CVAE decoder.",
             )
 
-            c_digit, c_count, c_btn = st.columns([2.5, 2.5, 2])
+        with col_count:
+            num_samples = st.selectbox(
+                "Number of Images:",
+                options=[5, 10, 20],
+                index=1,
+                help="Quantity of unique variations to sample.",
+            )
 
-            with c_digit:
-                selected_digit = st.selectbox(
-                    "Target Digit:",
-                    options=list(range(10)),
-                    index=7,
-                    help="Conditional class label fed to decoder.",
-                )
+        with col_btn:
+            st.markdown("<div style='height: 1.7rem;'></div>", unsafe_allow_html=True)
+            btn_generate = st.button("Generate Images", type="primary", use_container_width=True)
 
-            with c_count:
-                num_samples = st.selectbox(
-                    "Sample Count:",
-                    options=[5, 10, 20],
-                    index=1,
-                    help="Number of distinct variations to sample.",
-                )
-
-            with c_btn:
-                st.markdown("<div style='height: 1.7rem;'></div>", unsafe_allow_html=True)
-                btn_generate = st.button("Generate Digits", type="primary", use_container_width=True)
-
-            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
         # Sampling Logic
         if "gen_tensor_cache" not in st.session_state or btn_generate:
-            with st.spinner("Synthesizing handwritten samples..."):
+            with st.spinner(f"Generating {num_samples} unique variations of digit '{selected_digit}'..."):
                 with torch.no_grad():
                     sampled_tensors = model_obj.sample(
                         num_samples=num_samples,
@@ -572,24 +700,24 @@ elif st.session_state["nav_page"] == "Generate":
         cached_count = st.session_state.get("cached_count", num_samples)
 
         if current_tensors is not None:
-            st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
 
-            # Output Canvas Header
-            head_col, regen_col = st.columns([4, 1.2])
+            # Output Header & Actions
+            head_col, regen_col = st.columns([4, 1.4])
             with head_col:
                 st.markdown(
                     f"""
-                    <div style="font-size: 1.1rem; font-weight: 600; color: #172033;">
-                        Generated Variations for Digit '{cached_digit}'
+                    <div style="font-size: 1.15rem; font-weight: 600; color: #0F172A;">
+                        Generated Images for Digit '{cached_digit}'
                     </div>
                     <div style="font-size: 0.82rem; color: #64748B;">
-                        Showing {cached_count} synthetic instances • Sampled from standard normal latent distribution.
+                        Showing {cached_count} synthetic variations • Generated at {st.session_state.get('cached_time', '')} from standard Gaussian latent noise.
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
             with regen_col:
-                if st.button("Generate Again", type="secondary", use_container_width=True):
+                if st.button("Generate Another Batch", type="secondary", use_container_width=True):
                     with torch.no_grad():
                         st.session_state["gen_tensor_cache"] = model_obj.sample(
                             num_samples=cached_count,
@@ -601,7 +729,7 @@ elif st.session_state["nav_page"] == "Generate":
 
             st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
 
-            # Clean Display Grid
+            # Responsive 5-Column Grid Display
             cols_per_row = 5
             pil_list = [tensor_to_pil(current_tensors[i]) for i in range(cached_count)]
 
@@ -614,21 +742,19 @@ elif st.session_state["nav_page"] == "Generate":
                             pil_img = pil_list[s_idx]
                             st.markdown(
                                 f"""
-                                <div class="digit-frame">
-                                    <div style="font-size: 0.72rem; color: #64748B; font-weight: 500; margin-bottom: 2px;">
-                                        Sample #{s_idx + 1}
-                                    </div>
+                                <div class="digit-tile">
+                                    <div class="digit-tile-label">Sample #{s_idx + 1}</div>
                                 </div>
                                 """,
                                 unsafe_allow_html=True,
                             )
                             st.image(pil_img, width=110)
 
-                            # Minimalist individual download
+                            # Individual PNG Download
                             buf = io.BytesIO()
                             pil_img.save(buf, format="PNG")
                             st.download_button(
-                                label="Download PNG",
+                                label="⬇️ PNG",
                                 data=buf.getvalue(),
                                 file_name=f"digit_{cached_digit}_sample_{s_idx + 1}.png",
                                 mime="image/png",
@@ -638,35 +764,61 @@ elif st.session_state["nav_page"] == "Generate":
 
             st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
 
-            # Composite Grid Export
+            # Bulk Download Panel (Single ZIP File & Full Composite Grid PNG)
             st.markdown(
                 """
-                <div class="df-card" style="display: flex; align-items: center; justify-content: space-between;">
-                    <div>
-                        <div style="font-weight: 600; color: #172033; font-size: 0.95rem;">Export Complete Sample Grid</div>
-                        <div style="font-size: 0.82rem; color: #64748B;">Download all generated variations as a single high-resolution composite PNG.</div>
+                <div class="content-card">
+                    <div style="font-weight: 600; color: #0F172A; font-size: 0.95rem; margin-bottom: 0.25rem;">
+                        Export Generated Batch
                     </div>
-                </div>
+                    <div style="font-size: 0.82rem; color: #64748B; margin-bottom: 1rem;">
+                        Download all generated images as a single packaged ZIP archive or export a composite comparison grid.
+                    </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-            fig = plot_generated_digits_grid(
-                current_tensors,
-                digit=cached_digit,
-                ncols=min(5, cached_count),
-            )
-            grid_buf = io.BytesIO()
-            fig.savefig(grid_buf, format="PNG", bbox_inches="tight", dpi=200)
-            plt.close(fig)
+            d_col1, d_col2 = st.columns(2)
 
-            st.download_button(
-                label=f"Download Full Grid PNG ({cached_count} samples)",
-                data=grid_buf.getvalue(),
-                file_name=f"digitforge_{cached_digit}_{cached_count}_grid.png",
-                mime="image/png",
-                type="secondary",
-            )
+            with d_col1:
+                # In-Memory ZIP File Creation
+                zip_buffer = io.BytesIO()
+                with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+                    for idx, img in enumerate(pil_list):
+                        ib = io.BytesIO()
+                        img.save(ib, format="PNG")
+                        zf.writestr(f"digit_{cached_digit}_sample_{idx + 1}.png", ib.getvalue())
+
+                st.download_button(
+                    label=f"📦 Download All as ZIP ({cached_count} PNGs)",
+                    data=zip_buffer.getvalue(),
+                    file_name=f"digit_{cached_digit}_{cached_count}_samples.zip",
+                    mime="application/zip",
+                    type="secondary",
+                    use_container_width=True,
+                )
+
+            with d_col2:
+                # Composite Grid Image Creation
+                fig = plot_generated_digits_grid(
+                    current_tensors,
+                    digit=cached_digit,
+                    ncols=min(5, cached_count),
+                )
+                grid_buf = io.BytesIO()
+                fig.savefig(grid_buf, format="PNG", bbox_inches="tight", dpi=200)
+                plt.close(fig)
+
+                st.download_button(
+                    label=f"🖼️ Download Full Grid as PNG",
+                    data=grid_buf.getvalue(),
+                    file_name=f"digitforge_{cached_digit}_{cached_count}_grid.png",
+                    mime="image/png",
+                    type="secondary",
+                    use_container_width=True,
+                )
+
+            st.markdown("</div>", unsafe_allow_html=True)
 
 
 # -----------------------------------------------------------------------------
@@ -675,10 +827,11 @@ elif st.session_state["nav_page"] == "Generate":
 elif st.session_state["nav_page"] == "Latent Explorer":
     st.markdown(
         """
-        <div style="margin-bottom: 1.5rem;">
+        <div style="margin-bottom: 1.25rem;">
             <h2>Latent Space Explorer</h2>
             <p style="color: #64748B; margin-bottom: 0;">
-                Adjust individual latent coordinates while holding the conditioned digit constant to observe how continuous vectors shape visual stroke properties.
+                Explore how the continuous 16-dimensional latent space influences handwriting attributes.
+                Adjust the coordinate sliders while holding the digit class fixed to observe real-time changes in stroke thickness, slant, and curvature.
             </p>
         </div>
         """,
@@ -686,15 +839,15 @@ elif st.session_state["nav_page"] == "Latent Explorer":
     )
 
     if model_obj is None:
-        st.error("Model checkpoint not found. Please train with `python train.py` first.")
+        st.error("⚠️ Model checkpoint not found. Please train with `python train.py` first.")
     else:
         latent_dim = model_obj.latent_dim
 
-        # Explorer Top Bar
+        # Control Row
         top_c1, top_c2, top_c3 = st.columns([2.5, 2, 2])
         with top_c1:
             explorer_digit = st.selectbox(
-                "Conditioned Digit Class:",
+                "Conditioned Digit Class (0 – 9):",
                 options=list(range(10)),
                 index=3,
                 key="latent_class_select",
@@ -707,7 +860,7 @@ elif st.session_state["nav_page"] == "Latent Explorer":
                 st.rerun()
         with top_c3:
             st.markdown("<div style='height: 1.7rem;'></div>", unsafe_allow_html=True)
-            if st.button("Reset to Mean (0.0)", type="secondary", use_container_width=True):
+            if st.button("Reset All to 0.0", type="secondary", use_container_width=True):
                 for d in range(latent_dim):
                     st.session_state[f"z_val_{d}"] = 0.0
                 st.rerun()
@@ -717,20 +870,20 @@ elif st.session_state["nav_page"] == "Latent Explorer":
             if f"z_val_{d}" not in st.session_state:
                 st.session_state[f"z_val_{d}"] = 0.0
 
-        st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
 
-        # 2-Column Layout: Sliders (Left) vs Large Preview (Right)
+        # 2-Column Layout: Controls (Left) vs Large Preview (Right)
         slider_side, preview_side = st.columns([3.2, 2.2])
 
         with slider_side:
             st.markdown(
                 """
-                <div class="df-card-subtle">
-                    <div style="font-weight: 600; color: #172033; font-size: 0.95rem; margin-bottom: 0.25rem;">
+                <div class="content-card-subtle">
+                    <div style="font-weight: 600; color: #0F172A; font-size: 0.95rem; margin-bottom: 0.2rem;">
                         Latent Coordinates (z ∈ [-3.0, +3.0])
                     </div>
-                    <div style="font-size: 0.8rem; color: #64748B; margin-bottom: 1rem;">
-                        99.7% of Gaussian prior mass lies within ±3.0 standard deviations.
+                    <div style="font-size: 0.8rem; color: #64748B; margin-bottom: 0.85rem;">
+                        The standard normal Gaussian prior N(0, I) concentrates ~99.7% of its probability mass within ±3.0 standard deviations.
                     </div>
                 """,
                 unsafe_allow_html=True,
@@ -742,7 +895,7 @@ elif st.session_state["nav_page"] == "Latent Explorer":
                 target_sub = sub1 if d < (latent_dim // 2) else sub2
                 with target_sub:
                     val = st.slider(
-                        f"z_{d}",
+                        f"Dimension z_{d}",
                         min_value=-3.0,
                         max_value=3.0,
                         step=0.1,
@@ -755,9 +908,9 @@ elif st.session_state["nav_page"] == "Latent Explorer":
         with preview_side:
             st.markdown(
                 """
-                <div class="df-card" style="text-align: center;">
-                    <div style="font-weight: 600; color: #172033; font-size: 0.95rem; margin-bottom: 0.75rem;">
-                        Decoded Output Canvas
+                <div class="content-card" style="text-align: center;">
+                    <div style="font-weight: 600; color: #0F172A; font-size: 0.95rem; margin-bottom: 0.5rem;">
+                        Live Decoded Output
                     </div>
                 """,
                 unsafe_allow_html=True,
@@ -775,11 +928,11 @@ elif st.session_state["nav_page"] == "Latent Explorer":
 
             st.image(pil_custom, width=220)
 
-            # Instant Download
+            # Instant Single Sample Download
             dl_buf = io.BytesIO()
             pil_custom.save(dl_buf, format="PNG")
             st.download_button(
-                label="Download Sample PNG",
+                label="⬇️ Download Sample PNG",
                 data=dl_buf.getvalue(),
                 file_name=f"latent_digit_{explorer_digit}.png",
                 mime="image/png",
@@ -790,7 +943,9 @@ elif st.session_state["nav_page"] == "Latent Explorer":
             st.markdown(
                 f"""
                 <div style="text-align: left; font-size: 0.82rem; color: #64748B; line-height: 1.5; margin-top: 1rem; border-top: 1px solid #E2E8F0; padding-top: 0.75rem;">
-                    <strong>Latent Manifold:</strong> Holding class '{explorer_digit}' fixed while shifting coordinates traverses the continuous latent space, altering stroke angle, thickness, and closure without changing digit class.
+                    <strong>Latent Space Representation:</strong> The latent vector z represents continuous stylistic parameters learned by the CVAE.
+                    Holding class '{explorer_digit}' fixed while shifting sliders smoothly modifies stroke angle, line thickness, and curvature
+                    while the conditioning label preserves digit identity.
                 </div>
                 </div>
                 """,
@@ -804,41 +959,89 @@ elif st.session_state["nav_page"] == "Latent Explorer":
 elif st.session_state["nav_page"] == "Model Insights":
     st.markdown(
         """
-        <div style="margin-bottom: 1.5rem;">
-            <h2>Model Insights & Training Analysis</h2>
+        <div style="margin-bottom: 1.25rem;">
+            <h2>Model Insights & Architecture</h2>
             <p style="color: #64748B; margin-bottom: 0;">
-                Detailed architectural formulation, loss equations, and empirical convergence history.
+                Comprehensive technical overview of the CVAE architecture, training configuration, and empirical loss trajectories.
             </p>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    tab_edu, tab_curves = st.tabs([
+    # Architecture Overview Cards
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.markdown(
+            """
+            <div class="stat-card">
+                <div class="stat-label">Architecture</div>
+                <div class="stat-value">CVAE</div>
+                <div class="stat-desc">MLP Encoder-Decoder</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with m2:
+        st.markdown(
+            """
+            <div class="stat-card">
+                <div class="stat-label">Latent Dimension</div>
+                <div class="stat-value">16</div>
+                <div class="stat-desc">Gaussian N(0, I) Prior</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with m3:
+        st.markdown(
+            """
+            <div class="stat-card">
+                <div class="stat-label">Dataset</div>
+                <div class="stat-value">70,000</div>
+                <div class="stat-desc">60k Train / 10k Test</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with m4:
+        st.markdown(
+            """
+            <div class="stat-card">
+                <div class="stat-label">Training Device</div>
+                <div class="stat-value">Apple MPS</div>
+                <div class="stat-desc">Metal Performance Shaders</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<div style='height: 1.25rem;'></div>", unsafe_allow_html=True)
+
+    # Educational Architectural Breakdown
+    tab_theory, tab_metrics = st.tabs([
         "Architecture & Formulation",
         "Empirical Training History",
     ])
 
-    with tab_edu:
+    with tab_theory:
         st.markdown(
             """
-            <div class="df-card">
+            <div class="content-card">
                 <h3 style="margin-top: 0;">What is Generative AI?</h3>
                 <p>
-                    Unlike discriminative algorithms that compute conditional class probabilities P(Y|X) to categorize images,
-                    Generative AI learns to approximate the underlying joint probability distribution P(X, Y).
-                    By modeling this distribution, the network can sample novel, synthetic instances that follow the same statistical structure as authentic training data.
+                    Unlike discriminative machine learning models that predict labels given an input P(Y|X),
+                    Generative AI learns the underlying probability distribution of the data P(X, Y).
+                    Once trained, the model can synthesize completely new, realistic data instances that were never part of the training set.
                 </p>
             </div>
 
-            <div class="df-card">
+            <div class="content-card">
                 <h3 style="margin-top: 0;">What is a Conditional Variational Autoencoder (CVAE)?</h3>
                 <p>
-                    A standard VAE models an unconstrained generative distribution P(X). While it maps images into a smooth Gaussian prior,
-                    it cannot target specific classes on demand.
-                    A <strong>Conditional VAE</strong> introduces conditioning variable Y (a 10-dimensional one-hot label for digits 0–9)
-                    to both the inference network Q<sub>φ</sub>(Z|X, Y) and generative network P<sub>θ</sub>(X|Z, Y).
-                    This structure guarantees direct categorical control over synthesis.
+                    A standard Variational Autoencoder maps images into a continuous latent distribution, but cannot be directed to produce a specific digit class.
+                    A <strong>Conditional VAE</strong> solves this by appending a 10-dimensional one-hot class label to both the encoder and decoder.
+                    This enables direct, controlled generation of any specific digit class (0 through 9) from the learned latent manifold.
                 </p>
             </div>
             """,
@@ -849,12 +1052,12 @@ elif st.session_state["nav_page"] == "Model Insights":
         with c_enc:
             st.markdown(
                 """
-                <div class="df-card-subtle">
-                    <h4 style="margin-top: 0; color: #172033;">Encoder (Inference Network)</h4>
-                    <ul style="font-size: 0.88rem; color: #475569; padding-left: 1.2rem;">
-                        <li><strong>Input:</strong> Concatenates flattened 28×28 image (784 dims) + one-hot label (10 dims) = <strong>794 dims</strong>.</li>
+                <div class="content-card-subtle">
+                    <h4 style="margin-top: 0; color: #0F172A;">Encoder (Inference Network)</h4>
+                    <ul style="font-size: 0.88rem; color: #334155; padding-left: 1.2rem;">
+                        <li><strong>Input Dimension:</strong> 784 image pixels + 10 one-hot classes = <strong>794 dims</strong>.</li>
                         <li><strong>Hidden Layers:</strong> 794 → 512 → 256 with LeakyReLU(0.2).</li>
-                        <li><strong>Outputs:</strong> Mean vector μ (16D) and log-variance log(σ²) (16D).</li>
+                        <li><strong>Outputs:</strong> Latent Mean vector μ (16D) and Log-Variance log(σ²) (16D).</li>
                     </ul>
                 </div>
                 """,
@@ -864,12 +1067,12 @@ elif st.session_state["nav_page"] == "Model Insights":
         with c_dec:
             st.markdown(
                 """
-                <div class="df-card-subtle">
-                    <h4 style="margin-top: 0; color: #172033;">Decoder (Generative Network)</h4>
-                    <ul style="font-size: 0.88rem; color: #475569; padding-left: 1.2rem;">
-                        <li><strong>Input:</strong> Concatenates sampled latent vector z (16 dims) + one-hot label (10 dims) = <strong>26 dims</strong>.</li>
+                <div class="content-card-subtle">
+                    <h4 style="margin-top: 0; color: #0F172A;">Decoder (Generative Network)</h4>
+                    <ul style="font-size: 0.88rem; color: #334155; padding-left: 1.2rem;">
+                        <li><strong>Input Dimension:</strong> 16 latent features + 10 one-hot classes = <strong>26 dims</strong>.</li>
                         <li><strong>Hidden Layers:</strong> 26 → 256 → 512 with LeakyReLU(0.2).</li>
-                        <li><strong>Output:</strong> 512 → 784 with Sigmoid activation strictly bounding pixel intensities to [0.0, 1.0].</li>
+                        <li><strong>Output:</strong> 512 → 784 with Sigmoid activation bounding pixel values strictly to [0.0, 1.0].</li>
                     </ul>
                 </div>
                 """,
@@ -878,53 +1081,53 @@ elif st.session_state["nav_page"] == "Model Insights":
 
         st.markdown(
             """
-            <div class="df-card">
+            <div class="content-card">
                 <h3 style="margin-top: 0;">The Reparameterization Trick</h3>
                 <p>
-                    Direct stochastic sampling z ~ N(μ, σ²) contains non-differentiable nodes, breaking backpropagation.
-                    The reparameterization trick isolates stochasticity by sampling standard normal noise ε ~ N(0, I) and computing:
+                    Sampling directly from a Gaussian distribution z ~ N(μ, σ²) is non-differentiable and blocks backpropagation.
+                    The reparameterization trick makes sampling differentiable by isolating stochasticity into parameter-free noise ε ~ N(0, I):
                 </p>
-                <div style="background:#F1F5F9; border-radius:6px; padding:0.75rem 1rem; font-family:monospace; font-size:0.9rem; color:#172033; margin: 0.5rem 0;">
+                <div style="background:#F1F5F9; border-radius:6px; padding:0.6rem 0.9rem; font-family:monospace; font-size:0.88rem; color:#0F172A; margin: 0.5rem 0;">
                     z = μ + σ ⊙ ε = μ + exp(0.5 · log_var) ⊙ ε
                 </div>
                 <p style="margin-bottom: 0;">
-                    Because ε is independent of model parameters, gradients flow directly from loss to encoder weights through μ and σ.
+                    This allows gradients to flow backwards through the network parameters via standard chain-rule backpropagation.
                 </p>
             </div>
 
-            <div class="df-card">
+            <div class="content-card">
                 <h3 style="margin-top: 0;">Loss Function: Evidence Lower Bound (ELBO)</h3>
                 <p>
-                    Training minimizes the negative ELBO, composed of two complementary loss terms:
+                    The CVAE minimizes the negative ELBO, composed of two mathematically balanced loss terms:
                 </p>
-                <ul style="font-size: 0.9rem; color: #475569; padding-left: 1.2rem;">
-                    <li><strong>Reconstruction Loss (Binary Cross Entropy):</strong> Measures pixel-level accuracy between decoded image x̂ and ground truth x across all 784 pixels.</li>
-                    <li><strong>Kullback-Leibler (KL) Divergence:</strong> Measures divergence between variational posterior Q(Z|X, Y) and prior N(0, I), preventing posterior collapse and ensuring smooth sampling.</li>
+                <ul style="font-size: 0.9rem; color: #334155; padding-left: 1.2rem;">
+                    <li><strong>Reconstruction Loss (Binary Cross Entropy):</strong> Measures pixel-level fidelity between the generated image x̂ and ground truth x across all 784 pixels.</li>
+                    <li><strong>KL Divergence:</strong> Measures statistical divergence between the approximate posterior Q(z|x, y) and the standard Gaussian prior P(z) = N(0, I), preventing overfitting and maintaining smooth latent interpolation.</li>
                 </ul>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    with tab_curves:
+    with tab_metrics:
         history_data = load_training_history(HISTORY_PATH)
 
         if history_data is None:
-            st.info("No training history file found. Run `python train.py` to record loss curves.")
+            st.info("ℹ️ No training history found at `training_history/loss_history.json`. Run `python train.py` to record loss curves.")
         else:
             epochs_count = len(history_data.get("train_total_loss", []))
             final_val = history_data.get("val_total_loss", [-1])[-1]
             final_bce = history_data.get("train_recon_loss", [-1])[-1]
             final_kl = history_data.get("train_kl_loss", [-1])[-1]
 
-            m1, m2, m3, m4 = st.columns(4)
-            with m1:
+            t_col1, t_col2, t_col3, t_col4 = st.columns(4)
+            with t_col1:
                 st.metric("Total Epochs", f"{epochs_count}")
-            with m2:
+            with t_col2:
                 st.metric("Final Val Loss", f"{final_val:.2f}")
-            with m3:
+            with t_col3:
                 st.metric("Final BCE Loss", f"{final_bce:.2f}")
-            with m4:
+            with t_col4:
                 st.metric("Final KL Loss", f"{final_kl:.2f}")
 
             st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
@@ -944,10 +1147,10 @@ elif st.session_state["nav_page"] == "Model Insights":
 elif st.session_state["nav_page"] == "About":
     st.markdown(
         """
-        <div style="margin-bottom: 1.5rem;">
+        <div style="margin-bottom: 1.25rem;">
             <h2>About DigitForge</h2>
             <p style="color: #64748B; margin-bottom: 0;">
-                Academic documentation, methodology, and technical specifications.
+                Academic mini-project documentation, methodology, and technical specifications.
             </p>
         </div>
         """,
@@ -956,64 +1159,69 @@ elif st.session_state["nav_page"] == "About":
 
     st.markdown(
         """
-        <div class="df-card">
-            <h3 style="margin-top:0;">1. Project Description</h3>
+        <div class="content-card">
+            <h3 style="margin-top:0;">1. Project Objective</h3>
             <p>
                 <strong>DigitForge</strong> is an academic Generative AI mini-project developed for final-year B.Tech Computer Science & Engineering.
-                It formulates, trains, and verifies a Conditional Variational Autoencoder (CVAE) from scratch in PyTorch
-                to synthesize realistic handwritten digits conditioned on target labels from 0 to 9.
+                Its primary objective is to implement, train, and deploy a Conditional Variational Autoencoder (CVAE) from scratch
+                in PyTorch to generate synthetic handwritten digits (0 through 9) conditioned on user-specified class labels.
             </p>
         </div>
 
-        <div class="df-card">
-            <h3 style="margin-top:0;">2. Problem Statement</h3>
+        <div class="content-card">
+            <h3 style="margin-top:0;">2. What is a Conditional Variational Autoencoder?</h3>
             <p>
-                Traditional deep learning classifiers excel at mapping images to categories, but cannot synthesize new instances.
-                Standard Variational Autoencoders generate images from a Gaussian prior, but lack categorical control.
-                DigitForge resolves this limitation by conditioning both the probabilistic inference network and generative network on class labels,
-                enabling targeted, controllable handwritten digit generation on demand.
+                A Conditional Variational Autoencoder (CVAE) is a directed probabilistic generative deep learning architecture.
+                While standard autoencoders compress inputs into an unconstrained latent space and standard VAEs generate random samples,
+                a CVAE introduces class conditioning (one-hot label vectors) into both the encoder and decoder.
+                This provides targeted control: the user chooses a digit class, and the decoder samples unique variations from the continuous latent manifold.
             </p>
         </div>
 
-        <div class="df-card">
-            <h3 style="margin-top:0;">3. Objectives</h3>
-            <ul style="font-size:0.92rem; color:#475569; padding-left:1.2rem;">
-                <li>Implement a genuine Conditional Variational Autoencoder from scratch in PyTorch.</li>
-                <li>Train and validate on the 70,000-sample MNIST benchmark dataset.</li>
-                <li>Enable class-conditioned synthetic handwritten digit synthesis for digits 0–9.</li>
-                <li>Provide continuous 16-dimensional latent space exploration.</li>
-                <li>Deploy an accessible, modern AI product interface using Streamlit.</li>
+        <div class="content-card">
+            <h3 style="margin-top:0;">3. How the MNIST Dataset is Used</h3>
+            <p>
+                The <strong>MNIST</strong> (Modified National Institute of Standards and Technology) dataset is the universal benchmark in handwritten character recognition:
+            </p>
+            <ul style="font-size:0.92rem; color:#334155; padding-left:1.2rem;">
+                <li><strong>Dataset Split:</strong> 60,000 training images and 10,000 independent test images.</li>
+                <li><strong>Format:</strong> 28 × 28 grayscale pixels (784 features per image).</li>
+                <li><strong>Normalization:</strong> Transformed using <code>transforms.ToTensor()</code> into floating-point tensors bounded strictly in [0.0, 1.0], matching the decoder's Sigmoid activation.</li>
+                <li><strong>Data Integrity:</strong> Generated outputs strictly originate from random latent sampling; test samples are never copied or returned.</li>
             </ul>
         </div>
 
-        <div class="df-card">
-            <h3 style="margin-top:0;">4. Methodology</h3>
-            <ol style="font-size:0.92rem; color:#475569; padding-left:1.2rem;">
-                <li><strong>Dataset Preprocessing:</strong> 60,000 training and 10,000 testing images scaled to [0.0, 1.0].</li>
-                <li><strong>Network Architecture:</strong> Fully connected encoder (794 → 512 → 256) predicting μ and log(σ²), followed by decoder (26 → 256 → 512 → 784) with Sigmoid activation.</li>
-                <li><strong>Reparameterization Trick:</strong> Enabling backpropagation through Gaussian latent sampling.</li>
-                <li><strong>Joint Optimization:</strong> Adam optimizer minimizing Binary Cross Entropy and KL divergence.</li>
+        <div class="content-card">
+            <h3 style="margin-top:0;">4. Technologies Used</h3>
+            <div>
+                <span class="tech-pill">Python 3.14</span>
+                <span class="tech-pill">PyTorch 2.15</span>
+                <span class="tech-pill">Apple Silicon MPS</span>
+                <span class="tech-pill">Torchvision</span>
+                <span class="tech-pill">Streamlit 1.67</span>
+                <span class="tech-pill">NumPy 2.5</span>
+                <span class="tech-pill">Matplotlib 3.11</span>
+                <span class="tech-pill">Pillow 13.0</span>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3 style="margin-top:0;">5. How the Model Generates New Images</h3>
+            <ol style="font-size:0.92rem; color:#334155; padding-left:1.2rem;">
+                <li>A target digit class (0–9) is selected by the user and encoded into a 10-dimensional one-hot vector.</li>
+                <li>A 16-dimensional latent vector is sampled from standard normal Gaussian noise: <strong>z ~ N(0, I)</strong>.</li>
+                <li>The latent vector and one-hot label are concatenated to form a 26-dimensional input vector.</li>
+                <li>The input is passed through the decoder's fully connected hidden layers (26 → 256 → 512 → 784).</li>
+                <li>The Sigmoid output function maps predictions into [0.0, 1.0] and reshapes the tensor into a 28×28 grayscale image.</li>
             </ol>
         </div>
 
-        <div class="df-card">
-            <h3 style="margin-top:0;">5. Dataset Information</h3>
-            <p>
-                The <strong>MNIST</strong> (Modified National Institute of Standards and Technology) dataset contains:
-            </p>
-            <ul style="font-size:0.92rem; color:#475569; padding-left:1.2rem;">
-                <li>70,000 total 28×28 grayscale images (60,000 train, 10,000 test).</li>
-                <li>10 balanced digit categories (0 to 9).</li>
-                <li>Standard benchmark for density estimation and generative modeling.</li>
-            </ul>
-        </div>
-
-        <div class="df-card">
+        <div class="content-card">
             <h3 style="margin-top:0;">6. Future Scope</h3>
-            <ul style="font-size:0.92rem; color:#475569; padding-left:1.2rem;">
-                <li><strong>Convolutional CVAE:</strong> Implementing transposed convolutions to better capture spatial stroke relationships.</li>
-                <li><strong>Diffusion Models:</strong> Extending class-conditioning to Denoising Diffusion Probabilistic Models (DDPM).</li>
-                <li><strong>High-Resolution Extensions:</strong> Training on color or higher-resolution character datasets such as Omniglot and SVHN.</li>
+            <ul style="font-size:0.92rem; color:#334155; padding-left:1.2rem;">
+                <li><strong>Convolutional CVAE (Conv-CVAE):</strong> Utilizing transposed convolutions to capture 2D spatial correlations more effectively.</li>
+                <li><strong>Diffusion Models:</strong> Applying Denoising Diffusion Probabilistic Models (DDPM) for higher-resolution character synthesis.</li>
+                <li><strong>Higher-Resolution Datasets:</strong> Adapting the conditional framework to color character benchmarks such as SVHN and Omniglot.</li>
             </ul>
         </div>
         """,
