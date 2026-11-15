@@ -1,7 +1,7 @@
-"""DigitForge - Generative AI Studio.
+"""DigiForge - Generative AI Studio.
 
 AI-Powered Handwritten Digit Generation Using Conditional Variational Autoencoder (CVAE).
-Complete UI/UX Redesign & Professional SaaS Interface.
+Bright, High-Contrast, Production-Quality UI/UX Redesign.
 """
 
 import os
@@ -32,92 +32,142 @@ from utils.visualization import (
 # 1. Page Configuration
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="DigitForge • Generative AI Studio",
+    page_title="DigiForge • Generative AI Studio",
     page_icon="✏️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # -----------------------------------------------------------------------------
-# 2. Modern SaaS Design System & CSS
+# 2. Comprehensive High-Contrast Light Theme & Design System
 # -----------------------------------------------------------------------------
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    /* Global Typography & Palette */
-    html, body, [class*="css"] {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        color: #0F172A;
-        background-color: #FFFFFF;
+    /* Force Light Palette onto all Streamlit App Containers */
+    .stApp, 
+    [data-testid="stAppViewContainer"], 
+    [data-testid="stMain"],
+    [data-testid="stMainBlockContainer"],
+    .main {
+        background-color: #F5F7FF !important;
+        color: #334155 !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     }
 
-    /* Clean Streamlit chrome */
+    /* Hide default Streamlit chrome header/footer/menu */
     #MainMenu {visibility: hidden;}
-    header {visibility: hidden;}
+    header[data-testid="stHeader"] {
+        background-color: transparent !important;
+        visibility: hidden !important;
+    }
     footer {visibility: hidden;}
     .stDeployButton {display: none;}
 
-    /* Main Container Spacing */
+    /* Main Container Dimensions & Padding */
     .block-container {
-        padding-top: 1.75rem;
-        padding-bottom: 3.5rem;
-        max-width: 1140px;
+        padding-top: 2rem !important;
+        padding-bottom: 3.5rem !important;
+        max-width: 1140px !important;
     }
 
-    /* Sidebar Styling */
-    section[data-testid="stSidebar"] {
-        background-color: #F8FAFC;
-        border-right: 1px solid #E2E8F0;
+    /* ---------------------------------------------------- */
+    /* Sidebar Styling: Clean White with Subtle Borders     */
+    /* ---------------------------------------------------- */
+    section[data-testid="stSidebar"],
+    [data-testid="stSidebarContent"] {
+        background-color: #FFFFFF !important;
+        border-right: 1px solid #E2E8F0 !important;
     }
     section[data-testid="stSidebar"] .block-container {
-        padding-top: 1.5rem;
-        padding-bottom: 2rem;
+        padding-top: 1.5rem !important;
+        padding-bottom: 2rem !important;
     }
 
-    /* Headings */
-    h1, h2, h3, h4 {
-        color: #0F172A;
-        font-weight: 600;
-        letter-spacing: -0.02em;
+    /* ---------------------------------------------------- */
+    /* Strict Typography Rules & Color Contrast             */
+    /* ---------------------------------------------------- */
+    h1, h2, h3, h4, h5, h6,
+    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+        color: #172554 !important;
+        font-family: 'Inter', sans-serif !important;
+        letter-spacing: -0.02em !important;
     }
-    h1 {
-        font-size: 2rem;
-        line-height: 1.25;
-        margin-bottom: 0.5rem;
+    h1, .stMarkdown h1 {
+        font-size: 2.1rem !important;
+        font-weight: 700 !important;
+        line-height: 1.25 !important;
+        margin-bottom: 0.5rem !important;
     }
-    h2 {
-        font-size: 1.45rem;
-        margin-top: 0.25rem;
-        margin-bottom: 0.4rem;
+    h2, .stMarkdown h2 {
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+        margin-top: 0.25rem !important;
+        margin-bottom: 0.4rem !important;
     }
-    h3 {
-        font-size: 1.1rem;
-        margin-top: 0.75rem;
-        margin-bottom: 0.35rem;
+    h3, .stMarkdown h3 {
+        font-size: 1.15rem !important;
+        font-weight: 600 !important;
+        margin-top: 0.75rem !important;
+        margin-bottom: 0.35rem !important;
     }
-    p, li {
+    p, li, span, label, div {
         color: #334155;
-        font-size: 0.92rem;
+        font-size: 0.95rem;
         line-height: 1.6;
+    }
+    .stMarkdown p {
+        color: #334155 !important;
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+    }
+
+    /* ---------------------------------------------------- */
+    /* Card System: White & Soft Lavender Backgrounds       */
+    /* ---------------------------------------------------- */
+    .df-card {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 10px !important;
+        padding: 1.35rem 1.5rem !important;
+        margin-bottom: 1.15rem !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    }
+    .df-card-soft {
+        background-color: #EEF2FF !important;
+        border: 1px solid #E0E7FF !important;
+        border-radius: 10px !important;
+        padding: 1.25rem 1.4rem !important;
+        margin-bottom: 1.15rem !important;
+    }
+    .df-card-white {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 10px !important;
+        padding: 1.2rem 1.35rem !important;
+        margin-bottom: 1rem !important;
     }
 
     /* Hero Banner */
-    .hero-box {
-        padding: 0.5rem 0 1.5rem 0;
-        border-bottom: 1px solid #E2E8F0;
+    .hero-banner {
+        background-color: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 1.85rem 2rem;
         margin-bottom: 1.75rem;
+        box-shadow: 0 2px 4px rgba(81, 69, 229, 0.04);
     }
-    .hero-badge {
+    .hero-tag {
         display: inline-flex;
         align-items: center;
         gap: 6px;
         background: #EEF2FF;
-        color: #4F46E5;
+        color: #5145E5;
         font-size: 0.78rem;
         font-weight: 600;
-        padding: 0.25rem 0.7rem;
+        padding: 0.25rem 0.75rem;
         border-radius: 9999px;
         margin-bottom: 0.85rem;
         border: 1px solid #E0E7FF;
@@ -125,194 +175,204 @@ st.markdown(
     .hero-title {
         font-size: 2.15rem;
         font-weight: 700;
-        color: #0F172A;
+        color: #172554 !important;
         letter-spacing: -0.025em;
         line-height: 1.2;
         margin-bottom: 0.5rem;
     }
     .hero-subtitle {
         font-size: 1.15rem;
-        font-weight: 500;
-        color: #334155;
-        margin-bottom: 0.6rem;
+        font-weight: 600;
+        color: #334155 !important;
+        margin-bottom: 0.5rem;
     }
     .hero-description {
-        font-size: 0.95rem;
-        color: #64748B;
-        max-width: 720px;
+        font-size: 0.96rem;
+        color: #475569 !important;
+        max-width: 740px;
         line-height: 1.6;
         margin-bottom: 1.25rem;
     }
 
     /* Information / Stat Cards */
     .stat-card {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 10px;
-        padding: 1.15rem 1.25rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        background: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 10px !important;
+        padding: 1.2rem 1.35rem !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+        height: 100% !important;
     }
     .stat-label {
-        font-size: 0.78rem;
-        text-transform: uppercase;
-        color: #64748B;
-        font-weight: 600;
-        letter-spacing: 0.05em;
+        font-size: 0.78rem !important;
+        text-transform: uppercase !important;
+        color: #64748B !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.05em !important;
     }
     .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #0F172A;
-        margin-top: 0.2rem;
+        font-size: 1.55rem !important;
+        font-weight: 700 !important;
+        color: #172554 !important;
+        margin-top: 0.2rem !important;
     }
     .stat-desc {
-        font-size: 0.8rem;
-        color: #64748B;
-        margin-top: 0.2rem;
+        font-size: 0.82rem !important;
+        color: #475569 !important;
+        margin-top: 0.2rem !important;
     }
 
-    /* Content Cards */
-    .content-card {
-        background-color: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 10px;
-        padding: 1.25rem 1.4rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
-    }
-    .content-card-subtle {
-        background-color: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 10px;
-        padding: 1.15rem 1.3rem;
-        margin-bottom: 1rem;
-    }
-
-    /* Image Display Frame */
+    /* Digit Preview Tiles */
     .digit-tile {
-        background-color: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 0.5rem;
-        text-align: center;
-        transition: border-color 0.15s ease, box-shadow 0.15s ease;
-        margin-bottom: 0.65rem;
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 8px !important;
+        padding: 0.5rem !important;
+        text-align: center !important;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+        margin-bottom: 0.65rem !important;
     }
     .digit-tile:hover {
-        border-color: #CBD5E1;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        border-color: #5145E5 !important;
+        box-shadow: 0 2px 6px rgba(81, 69, 229, 0.08) !important;
     }
     .digit-tile-label {
-        font-size: 0.72rem;
-        color: #64748B;
-        font-weight: 600;
-        margin-bottom: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
+        font-size: 0.74rem !important;
+        color: #172554 !important;
+        font-weight: 600 !important;
+        margin-bottom: 4px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.04em !important;
     }
 
-    /* Minimal Pill Badges */
+    /* Pills & Badges */
     .tech-pill {
         display: inline-block;
-        background: #F1F5F9;
-        color: #334155;
-        font-size: 0.78rem;
-        font-weight: 500;
-        padding: 0.2rem 0.6rem;
-        border-radius: 6px;
-        margin-right: 0.4rem;
-        margin-bottom: 0.4rem;
-        border: 1px solid #E2E8F0;
+        background: #EEF2FF !important;
+        color: #5145E5 !important;
+        font-size: 0.78rem !important;
+        font-weight: 600 !important;
+        padding: 0.25rem 0.65rem !important;
+        border-radius: 6px !important;
+        margin-right: 0.4rem !important;
+        margin-bottom: 0.4rem !important;
+        border: 1px solid #E0E7FF !important;
     }
 
-    /* Sidebar In-Flow Status Box */
-    .sidebar-status-box {
-        margin-top: 2rem;
-        padding: 0.85rem 1rem;
+    /* ---------------------------------------------------- */
+    /* Sidebar Navigation & Highlighting                    */
+    /* ---------------------------------------------------- */
+    div[data-testid="stRadio"] > div {
+        gap: 4px !important;
+    }
+    div[data-testid="stRadio"] label {
+        font-size: 0.9rem !important;
+        font-weight: 500 !important;
+        color: #334155 !important;
+        padding: 0.45rem 0.85rem !important;
+        border-radius: 8px !important;
+        transition: all 0.15s ease !important;
+    }
+    div[data-testid="stRadio"] label:hover {
+        background-color: #EEF2FF !important;
+        color: #5145E5 !important;
+    }
+
+    /* Sidebar Status Card */
+    .sidebar-status-card {
+        margin-top: 1.75rem;
+        padding: 0.9rem 1rem;
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 8px;
+        border-radius: 10px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
-    .sidebar-status-header {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 0.5rem;
-    }
-    .status-dot {
+    .status-dot-green {
         width: 8px;
         height: 8px;
         background-color: #16A34A;
         border-radius: 50%;
         display: inline-block;
     }
-    .status-dot-err {
+    .status-dot-red {
         width: 8px;
         height: 8px;
         background-color: #DC2626;
         border-radius: 50%;
         display: inline-block;
     }
-    .status-title {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #0F172A;
-    }
-    .status-meta-row {
+    .status-meta-item {
         display: flex;
         justify-content: space-between;
         font-size: 0.75rem;
         color: #64748B;
-        margin-top: 0.25rem;
+        margin-top: 0.3rem;
         line-height: 1.4;
     }
     .status-meta-val {
-        font-weight: 500;
-        color: #1E293B;
+        font-weight: 600;
+        color: #172554;
     }
 
-    /* Sidebar Radio Styling */
-    div[data-testid="stRadio"] > div {
-        gap: 4px;
-    }
-    div[data-testid="stRadio"] label {
-        font-size: 0.88rem !important;
-        font-weight: 500 !important;
-        color: #475569 !important;
-        padding: 0.4rem 0.75rem !important;
+    /* ---------------------------------------------------- */
+    /* Buttons: Primary Vibrant Indigo & Crisp White        */
+    /* ---------------------------------------------------- */
+    button[kind="primary"] {
+        background: linear-gradient(135deg, #5145E5 0%, #4338CA 100%) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        font-weight: 600 !important;
         border-radius: 6px !important;
+        padding: 0.45rem 1.1rem !important;
+        box-shadow: 0 2px 4px rgba(81, 69, 229, 0.15) !important;
         transition: all 0.15s ease !important;
     }
-    div[data-testid="stRadio"] label:hover {
-        background-color: #F1F5F9 !important;
-        color: #0F172A !important;
-    }
-
-    /* Button Styling */
-    button[kind="primary"] {
-        background-color: #4F46E5 !important;
-        border: none !important;
-        font-weight: 500 !important;
-        border-radius: 6px !important;
-        padding: 0.45rem 1rem !important;
-    }
     button[kind="primary"]:hover {
-        background-color: #4338CA !important;
+        background: #4338CA !important;
+        box-shadow: 0 4px 8px rgba(81, 69, 229, 0.25) !important;
     }
     button[kind="secondary"] {
         background-color: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        color: #0F172A !important;
+        border: 1px solid #CBD5E1 !important;
+        color: #172554 !important;
         border-radius: 6px !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
+        transition: all 0.15s ease !important;
     }
     button[kind="secondary"]:hover {
-        background-color: #F8FAFC !important;
+        background-color: #EEF2FF !important;
+        border-color: #5145E5 !important;
+        color: #5145E5 !important;
+    }
+
+    /* Streamlit Input / Selectbox Controls Contrast */
+    div[data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
         border-color: #CBD5E1 !important;
+        color: #172554 !important;
+    }
+    div[data-baseweb="select"] span {
+        color: #172554 !important;
+    }
+
+    /* Streamlit Metrics Contrast */
+    div[data-testid="stMetricValue"] {
+        color: #172554 !important;
+        font-weight: 700 !important;
+    }
+    div[data-testid="stMetricLabel"] {
+        color: #64748B !important;
+        font-weight: 600 !important;
+    }
+
+    /* Streamlit Tabs Contrast */
+    button[data-baseweb="tab"] {
+        color: #64748B !important;
+        font-weight: 600 !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"] {
+        color: #5145E5 !important;
+        border-bottom-color: #5145E5 !important;
     }
     </style>
     """,
@@ -364,19 +424,19 @@ with st.sidebar:
     st.markdown(
         """
         <div style="padding: 0.25rem 0 0.85rem 0;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <div style="width: 26px; height: 26px; background: #4F46E5; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">D</div>
-                <span style="font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; color: #0F172A;">DigitForge</span>
-            </div>
-            <div style="font-size: 0.78rem; color: #64748B; font-weight: 500; margin-left: 34px; margin-top: -2px;">
-                Generative AI Studio
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #5145E5 0%, #06B6D4 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 15px;">D</div>
+                <div>
+                    <div style="font-size: 1.1rem; font-weight: 700; letter-spacing: -0.015em; color: #172554; line-height: 1.1;">DigiForge</div>
+                    <div style="font-size: 0.74rem; color: #64748B; font-weight: 500;">Generative AI Studio</div>
+                </div>
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    st.markdown("<div style='height: 0.4rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 0.35rem;'></div>", unsafe_allow_html=True)
 
     if "nav_page" not in st.session_state:
         st.session_state["nav_page"] = "Overview"
@@ -393,8 +453,8 @@ with st.sidebar:
     )
     st.session_state["nav_page"] = selected_nav
 
-    # In-Flow Model Status Section (No absolute positioning to prevent overlap)
-    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+    # In-Flow Model Status Section
+    st.markdown("<div style='height: 1.25rem;'></div>", unsafe_allow_html=True)
 
     if model_obj is not None:
         device_label = "Apple MPS" if device_obj and device_obj.type == "mps" else (
@@ -403,24 +463,24 @@ with st.sidebar:
         val_loss_val = meta_obj.get("val_loss", 94.64) if meta_obj else 94.64
         st.markdown(
             f"""
-            <div class="sidebar-status-box">
-                <div class="sidebar-status-header">
-                    <span class="status-dot"></span>
-                    <span class="status-title">Model Active</span>
+            <div class="sidebar-status-card">
+                <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 0.4rem;">
+                    <span class="status-dot-green"></span>
+                    <span style="font-size: 0.82rem; font-weight: 700; color: #172554;">Model Ready</span>
                 </div>
-                <div class="status-meta-row">
+                <div class="status-meta-item">
                     <span>Architecture</span>
-                    <span class="status-meta-val">CVAE (MLP)</span>
+                    <span class="status-meta-val">CVAE (PyTorch)</span>
                 </div>
-                <div class="status-meta-row">
+                <div class="status-meta-item">
                     <span>Latent Space</span>
                     <span class="status-meta-val">16D Gaussian</span>
                 </div>
-                <div class="status-meta-row">
-                    <span>Device</span>
+                <div class="status-meta-item">
+                    <span>Hardware</span>
                     <span class="status-meta-val">{device_label}</span>
                 </div>
-                <div class="status-meta-row">
+                <div class="status-meta-item">
                     <span>Validation Loss</span>
                     <span class="status-meta-val">{val_loss_val:.2f}</span>
                 </div>
@@ -431,12 +491,12 @@ with st.sidebar:
     else:
         st.markdown(
             """
-            <div class="sidebar-status-box">
-                <div class="sidebar-status-header">
-                    <span class="status-dot-err"></span>
-                    <span class="status-title">Model Not Found</span>
+            <div class="sidebar-status-card">
+                <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 0.4rem;">
+                    <span class="status-dot-red"></span>
+                    <span style="font-size: 0.82rem; font-weight: 700; color: #DC2626;">Checkpoint Missing</span>
                 </div>
-                <div style="font-size: 0.75rem; color: #64748B; margin-top: 4px;">
+                <div style="font-size: 0.75rem; color: #64748B; margin-top: 2px;">
                     Run <code>python train.py</code> to train weights.
                 </div>
             </div>
@@ -446,8 +506,8 @@ with st.sidebar:
 
     st.markdown(
         """
-        <div style="margin-top: 1.25rem; padding-left: 4px; font-size: 0.74rem; color: #94A3B8;">
-            B.Tech Generative AI Academic Project
+        <div style="margin-top: 1.25rem; padding-left: 2px; font-size: 0.74rem; color: #64748B; font-weight: 500;">
+            DigiForge v1.0 • Academic AI Studio
         </div>
         """,
         unsafe_allow_html=True,
@@ -460,15 +520,15 @@ with st.sidebar:
 if st.session_state["nav_page"] == "Overview":
     st.markdown(
         """
-        <div class="hero-box">
-            <div class="hero-badge">Conditional Variational Autoencoder</div>
-            <div class="hero-title">Welcome to DigitForge</div>
+        <div class="hero-banner">
+            <div class="hero-tag">Conditional Variational Autoencoder (CVAE)</div>
+            <div class="hero-title">Welcome to DigiForge</div>
             <div class="hero-subtitle">
                 Generate unique handwritten digits using a Conditional Variational Autoencoder.
             </div>
             <div class="hero-description">
-                DigitForge is an academic Generative AI application that learns handwritten digit representations
-                from the MNIST dataset. By conditioning a Variational Autoencoder on class labels,
+                DigiForge is a Generative AI application that learns handwritten digit representations
+                from the benchmark MNIST dataset. By conditioning a Variational Autoencoder on class labels,
                 it allows you to synthesize novel, distinct handwritten digit variations from 0 to 9 on demand.
             </div>
         </div>
@@ -476,7 +536,7 @@ if st.session_state["nav_page"] == "Overview":
         unsafe_allow_html=True,
     )
 
-    # Three Compact Information Cards
+    # Three Aligned Information Cards
     c1, c2, c3 = st.columns(3)
     with c1:
         st.markdown(
@@ -506,7 +566,7 @@ if st.session_state["nav_page"] == "Overview":
             <div class="stat-card">
                 <div class="stat-label">Digit Classes</div>
                 <div class="stat-value">0 – 9</div>
-                <div class="stat-desc">10 Categorical One-Hot Classes</div>
+                <div class="stat-desc">10 Categorical One-Hot Output Classes</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -527,9 +587,12 @@ if st.session_state["nav_page"] == "Overview":
 
     st.markdown("<div style='height: 1.75rem;'></div>", unsafe_allow_html=True)
 
-    # Sample Preview Grid: 10 Digits in a 5-Column Responsive Grid (2 rows of 5)
+    # Synthetic Sample Preview: 10 Digits in a 5-Column Grid (2 rows of 5)
     st.markdown("### Synthetic Sample Preview")
-    st.caption("Clean samples generated directly by the trained CVAE across all 10 digit classes (0 to 9).")
+    st.markdown(
+        "<p style='color: #64748B; font-size: 0.9rem; margin-bottom: 1rem;'>Live synthetic digits generated directly by the trained CVAE across all 10 digit classes (0 to 9).</p>",
+        unsafe_allow_html=True,
+    )
 
     if model_obj is not None:
         with torch.no_grad():
@@ -553,7 +616,7 @@ if st.session_state["nav_page"] == "Overview":
                 )
                 st.image(preview_samples[i], width=110)
 
-        st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 0.4rem;'></div>", unsafe_allow_html=True)
 
         # Row 2: Digits 5 to 9 (5 columns)
         r2_cols = st.columns(5)
@@ -580,11 +643,11 @@ if st.session_state["nav_page"] == "Overview":
     with hw1:
         st.markdown(
             """
-            <div class="content-card">
-                <div style="font-weight: 600; font-size: 0.95rem; color: #0F172A; margin-bottom: 0.35rem;">
+            <div class="df-card">
+                <div style="font-weight: 700; font-size: 1rem; color: #172554; margin-bottom: 0.35rem;">
                     1. Encoder (Inference)
                 </div>
-                <p style="font-size: 0.88rem; color: #475569; margin: 0;">
+                <p style="font-size: 0.88rem; color: #334155; margin: 0;">
                     Compresses the 28×28 pixel image (784 features) concatenated with the one-hot digit label
                     into parameters of a variational distribution (mean μ and log-variance log σ²).
                 </p>
@@ -596,11 +659,11 @@ if st.session_state["nav_page"] == "Overview":
     with hw2:
         st.markdown(
             """
-            <div class="content-card">
-                <div style="font-weight: 600; font-size: 0.95rem; color: #0F172A; margin-bottom: 0.35rem;">
+            <div class="df-card">
+                <div style="font-weight: 700; font-size: 1rem; color: #172554; margin-bottom: 0.35rem;">
                     2. Latent Space & Reparameterization
                 </div>
-                <p style="font-size: 0.88rem; color: #475569; margin: 0;">
+                <p style="font-size: 0.88rem; color: #334155; margin: 0;">
                     Samples auxiliary Gaussian noise ε ~ N(0, I) to compute z = μ + σ ⊙ ε.
                     This reparameterization trick allows gradients to flow backwards through stochastic nodes.
                 </p>
@@ -612,11 +675,11 @@ if st.session_state["nav_page"] == "Overview":
     with hw3:
         st.markdown(
             """
-            <div class="content-card">
-                <div style="font-weight: 600; font-size: 0.95rem; color: #0F172A; margin-bottom: 0.35rem;">
+            <div class="df-card">
+                <div style="font-weight: 700; font-size: 1rem; color: #172554; margin-bottom: 0.35rem;">
                     3. Decoder (Generation)
                 </div>
-                <p style="font-size: 0.88rem; color: #475569; margin: 0;">
+                <p style="font-size: 0.88rem; color: #334155; margin: 0;">
                     Takes the continuous latent representation z together with your selected digit class,
                     and reconstructs brand-new 28×28 synthetic handwritten digit variations.
                 </p>
@@ -634,7 +697,7 @@ elif st.session_state["nav_page"] == "Generate Digits":
         """
         <div style="margin-bottom: 1.25rem;">
             <h2>Handwritten Digit Generator</h2>
-            <p style="color: #64748B; margin-bottom: 0;">
+            <p style="color: #475569; margin-bottom: 0;">
                 Select any digit from 0 to 9 and choose how many unique synthetic variations to generate.
                 Each image is synthesized using fresh latent samples z ~ N(0, I).
             </p>
@@ -649,10 +712,10 @@ elif st.session_state["nav_page"] == "Generate Digits":
             "Please train the model first by running `python train.py` in your terminal."
         )
     else:
-        # Structured Generation Control Panel
+        # Structured Generation Control Panel on White Card
         st.markdown(
             """
-            <div class="content-card-subtle" style="padding: 1.15rem 1.25rem 0.65rem 1.25rem;">
+            <div class="df-card" style="padding: 1.2rem 1.4rem 0.75rem 1.4rem; margin-bottom: 1.25rem;">
             """,
             unsafe_allow_html=True,
         )
@@ -700,18 +763,18 @@ elif st.session_state["nav_page"] == "Generate Digits":
         cached_count = st.session_state.get("cached_count", num_samples)
 
         if current_tensors is not None:
-            st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
 
             # Output Header & Actions
             head_col, regen_col = st.columns([4, 1.4])
             with head_col:
                 st.markdown(
                     f"""
-                    <div style="font-size: 1.15rem; font-weight: 600; color: #0F172A;">
+                    <div style="font-size: 1.15rem; font-weight: 700; color: #172554;">
                         Generated Images for Digit '{cached_digit}'
                     </div>
-                    <div style="font-size: 0.82rem; color: #64748B;">
-                        Showing {cached_count} synthetic variations • Generated at {st.session_state.get('cached_time', '')} from standard Gaussian latent noise.
+                    <div style="font-size: 0.84rem; color: #64748B;">
+                        Showing {cached_count} synthetic variations • Generated at {st.session_state.get('cached_time', '')} from Gaussian latent noise.
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -767,11 +830,11 @@ elif st.session_state["nav_page"] == "Generate Digits":
             # Bulk Download Panel (Single ZIP File & Full Composite Grid PNG)
             st.markdown(
                 """
-                <div class="content-card">
-                    <div style="font-weight: 600; color: #0F172A; font-size: 0.95rem; margin-bottom: 0.25rem;">
+                <div class="df-card">
+                    <div style="font-weight: 700; color: #172554; font-size: 0.98rem; margin-bottom: 0.25rem;">
                         Export Generated Batch
                     </div>
-                    <div style="font-size: 0.82rem; color: #64748B; margin-bottom: 1rem;">
+                    <div style="font-size: 0.84rem; color: #475569; margin-bottom: 1rem;">
                         Download all generated images as a single packaged ZIP archive or export a composite comparison grid.
                     </div>
                 """,
@@ -829,7 +892,7 @@ elif st.session_state["nav_page"] == "Latent Explorer":
         """
         <div style="margin-bottom: 1.25rem;">
             <h2>Latent Space Explorer</h2>
-            <p style="color: #64748B; margin-bottom: 0;">
+            <p style="color: #475569; margin-bottom: 0;">
                 Explore how the continuous 16-dimensional latent space influences handwriting attributes.
                 Adjust the coordinate sliders while holding the digit class fixed to observe real-time changes in stroke thickness, slant, and curvature.
             </p>
@@ -878,11 +941,11 @@ elif st.session_state["nav_page"] == "Latent Explorer":
         with slider_side:
             st.markdown(
                 """
-                <div class="content-card-subtle">
-                    <div style="font-weight: 600; color: #0F172A; font-size: 0.95rem; margin-bottom: 0.2rem;">
+                <div class="df-card">
+                    <div style="font-weight: 700; color: #172554; font-size: 0.98rem; margin-bottom: 0.2rem;">
                         Latent Coordinates (z ∈ [-3.0, +3.0])
                     </div>
-                    <div style="font-size: 0.8rem; color: #64748B; margin-bottom: 0.85rem;">
+                    <div style="font-size: 0.82rem; color: #64748B; margin-bottom: 0.85rem;">
                         The standard normal Gaussian prior N(0, I) concentrates ~99.7% of its probability mass within ±3.0 standard deviations.
                     </div>
                 """,
@@ -908,8 +971,8 @@ elif st.session_state["nav_page"] == "Latent Explorer":
         with preview_side:
             st.markdown(
                 """
-                <div class="content-card" style="text-align: center;">
-                    <div style="font-weight: 600; color: #0F172A; font-size: 0.95rem; margin-bottom: 0.5rem;">
+                <div class="df-card" style="text-align: center;">
+                    <div style="font-weight: 700; color: #172554; font-size: 0.98rem; margin-bottom: 0.5rem;">
                         Live Decoded Output
                     </div>
                 """,
@@ -942,8 +1005,8 @@ elif st.session_state["nav_page"] == "Latent Explorer":
 
             st.markdown(
                 f"""
-                <div style="text-align: left; font-size: 0.82rem; color: #64748B; line-height: 1.5; margin-top: 1rem; border-top: 1px solid #E2E8F0; padding-top: 0.75rem;">
-                    <strong>Latent Space Representation:</strong> The latent vector z represents continuous stylistic parameters learned by the CVAE.
+                <div style="text-align: left; font-size: 0.84rem; color: #475569; line-height: 1.5; margin-top: 1rem; border-top: 1px solid #E2E8F0; padding-top: 0.75rem;">
+                    <strong style="color: #172554;">Latent Space Representation:</strong> The latent vector z represents continuous stylistic parameters learned by the CVAE.
                     Holding class '{explorer_digit}' fixed while shifting sliders smoothly modifies stroke angle, line thickness, and curvature
                     while the conditioning label preserves digit identity.
                 </div>
@@ -961,7 +1024,7 @@ elif st.session_state["nav_page"] == "Model Insights":
         """
         <div style="margin-bottom: 1.25rem;">
             <h2>Model Insights & Architecture</h2>
-            <p style="color: #64748B; margin-bottom: 0;">
+            <p style="color: #475569; margin-bottom: 0;">
                 Comprehensive technical overview of the CVAE architecture, training configuration, and empirical loss trajectories.
             </p>
         </div>
@@ -1027,18 +1090,18 @@ elif st.session_state["nav_page"] == "Model Insights":
     with tab_theory:
         st.markdown(
             """
-            <div class="content-card">
-                <h3 style="margin-top: 0;">What is Generative AI?</h3>
-                <p>
+            <div class="df-card">
+                <h3 style="margin-top: 0; color: #172554;">What is Generative AI?</h3>
+                <p style="color: #334155;">
                     Unlike discriminative machine learning models that predict labels given an input P(Y|X),
                     Generative AI learns the underlying probability distribution of the data P(X, Y).
                     Once trained, the model can synthesize completely new, realistic data instances that were never part of the training set.
                 </p>
             </div>
 
-            <div class="content-card">
-                <h3 style="margin-top: 0;">What is a Conditional Variational Autoencoder (CVAE)?</h3>
-                <p>
+            <div class="df-card">
+                <h3 style="margin-top: 0; color: #172554;">What is a Conditional Variational Autoencoder (CVAE)?</h3>
+                <p style="color: #334155;">
                     A standard Variational Autoencoder maps images into a continuous latent distribution, but cannot be directed to produce a specific digit class.
                     A <strong>Conditional VAE</strong> solves this by appending a 10-dimensional one-hot class label to both the encoder and decoder.
                     This enables direct, controlled generation of any specific digit class (0 through 9) from the learned latent manifold.
@@ -1052,8 +1115,8 @@ elif st.session_state["nav_page"] == "Model Insights":
         with c_enc:
             st.markdown(
                 """
-                <div class="content-card-subtle">
-                    <h4 style="margin-top: 0; color: #0F172A;">Encoder (Inference Network)</h4>
+                <div class="df-card-soft">
+                    <h4 style="margin-top: 0; color: #172554;">Encoder (Inference Network)</h4>
                     <ul style="font-size: 0.88rem; color: #334155; padding-left: 1.2rem;">
                         <li><strong>Input Dimension:</strong> 784 image pixels + 10 one-hot classes = <strong>794 dims</strong>.</li>
                         <li><strong>Hidden Layers:</strong> 794 → 512 → 256 with LeakyReLU(0.2).</li>
@@ -1067,8 +1130,8 @@ elif st.session_state["nav_page"] == "Model Insights":
         with c_dec:
             st.markdown(
                 """
-                <div class="content-card-subtle">
-                    <h4 style="margin-top: 0; color: #0F172A;">Decoder (Generative Network)</h4>
+                <div class="df-card-soft">
+                    <h4 style="margin-top: 0; color: #172554;">Decoder (Generative Network)</h4>
                     <ul style="font-size: 0.88rem; color: #334155; padding-left: 1.2rem;">
                         <li><strong>Input Dimension:</strong> 16 latent features + 10 one-hot classes = <strong>26 dims</strong>.</li>
                         <li><strong>Hidden Layers:</strong> 26 → 256 → 512 with LeakyReLU(0.2).</li>
@@ -1081,23 +1144,23 @@ elif st.session_state["nav_page"] == "Model Insights":
 
         st.markdown(
             """
-            <div class="content-card">
-                <h3 style="margin-top: 0;">The Reparameterization Trick</h3>
-                <p>
+            <div class="df-card">
+                <h3 style="margin-top: 0; color: #172554;">The Reparameterization Trick</h3>
+                <p style="color: #334155;">
                     Sampling directly from a Gaussian distribution z ~ N(μ, σ²) is non-differentiable and blocks backpropagation.
                     The reparameterization trick makes sampling differentiable by isolating stochasticity into parameter-free noise ε ~ N(0, I):
                 </p>
-                <div style="background:#F1F5F9; border-radius:6px; padding:0.6rem 0.9rem; font-family:monospace; font-size:0.88rem; color:#0F172A; margin: 0.5rem 0;">
+                <div style="background:#F1F5F9; border: 1px solid #E2E8F0; border-radius:6px; padding:0.65rem 0.95rem; font-family:monospace; font-size:0.88rem; color:#172554; margin: 0.6rem 0;">
                     z = μ + σ ⊙ ε = μ + exp(0.5 · log_var) ⊙ ε
                 </div>
-                <p style="margin-bottom: 0;">
+                <p style="color: #334155; margin-bottom: 0;">
                     This allows gradients to flow backwards through the network parameters via standard chain-rule backpropagation.
                 </p>
             </div>
 
-            <div class="content-card">
-                <h3 style="margin-top: 0;">Loss Function: Evidence Lower Bound (ELBO)</h3>
-                <p>
+            <div class="df-card">
+                <h3 style="margin-top: 0; color: #172554;">Loss Function: Evidence Lower Bound (ELBO)</h3>
+                <p style="color: #334155;">
                     The CVAE minimizes the negative ELBO, composed of two mathematically balanced loss terms:
                 </p>
                 <ul style="font-size: 0.9rem; color: #334155; padding-left: 1.2rem;">
@@ -1148,8 +1211,8 @@ elif st.session_state["nav_page"] == "About":
     st.markdown(
         """
         <div style="margin-bottom: 1.25rem;">
-            <h2>About DigitForge</h2>
-            <p style="color: #64748B; margin-bottom: 0;">
+            <h2>About DigiForge</h2>
+            <p style="color: #475569; margin-bottom: 0;">
                 Academic mini-project documentation, methodology, and technical specifications.
             </p>
         </div>
@@ -1159,18 +1222,18 @@ elif st.session_state["nav_page"] == "About":
 
     st.markdown(
         """
-        <div class="content-card">
-            <h3 style="margin-top:0;">1. Project Objective</h3>
-            <p>
-                <strong>DigitForge</strong> is an academic Generative AI mini-project developed for final-year B.Tech Computer Science & Engineering.
+        <div class="df-card">
+            <h3 style="margin-top:0; color: #172554;">1. Project Objective</h3>
+            <p style="color: #334155;">
+                <strong>DigiForge</strong> is an academic Generative AI mini-project developed for final-year B.Tech Computer Science & Engineering.
                 Its primary objective is to implement, train, and deploy a Conditional Variational Autoencoder (CVAE) from scratch
                 in PyTorch to generate synthetic handwritten digits (0 through 9) conditioned on user-specified class labels.
             </p>
         </div>
 
-        <div class="content-card">
-            <h3 style="margin-top:0;">2. What is a Conditional Variational Autoencoder?</h3>
-            <p>
+        <div class="df-card">
+            <h3 style="margin-top:0; color: #172554;">2. What is a Conditional Variational Autoencoder?</h3>
+            <p style="color: #334155;">
                 A Conditional Variational Autoencoder (CVAE) is a directed probabilistic generative deep learning architecture.
                 While standard autoencoders compress inputs into an unconstrained latent space and standard VAEs generate random samples,
                 a CVAE introduces class conditioning (one-hot label vectors) into both the encoder and decoder.
@@ -1178,9 +1241,9 @@ elif st.session_state["nav_page"] == "About":
             </p>
         </div>
 
-        <div class="content-card">
-            <h3 style="margin-top:0;">3. How the MNIST Dataset is Used</h3>
-            <p>
+        <div class="df-card">
+            <h3 style="margin-top:0; color: #172554;">3. How the MNIST Dataset is Used</h3>
+            <p style="color: #334155;">
                 The <strong>MNIST</strong> (Modified National Institute of Standards and Technology) dataset is the universal benchmark in handwritten character recognition:
             </p>
             <ul style="font-size:0.92rem; color:#334155; padding-left:1.2rem;">
@@ -1191,8 +1254,8 @@ elif st.session_state["nav_page"] == "About":
             </ul>
         </div>
 
-        <div class="content-card">
-            <h3 style="margin-top:0;">4. Technologies Used</h3>
+        <div class="df-card">
+            <h3 style="margin-top:0; color: #172554;">4. Technologies Used</h3>
             <div>
                 <span class="tech-pill">Python 3.14</span>
                 <span class="tech-pill">PyTorch 2.15</span>
@@ -1205,8 +1268,8 @@ elif st.session_state["nav_page"] == "About":
             </div>
         </div>
 
-        <div class="content-card">
-            <h3 style="margin-top:0;">5. How the Model Generates New Images</h3>
+        <div class="df-card">
+            <h3 style="margin-top:0; color: #172554;">5. How the Model Generates New Images</h3>
             <ol style="font-size:0.92rem; color:#334155; padding-left:1.2rem;">
                 <li>A target digit class (0–9) is selected by the user and encoded into a 10-dimensional one-hot vector.</li>
                 <li>A 16-dimensional latent vector is sampled from standard normal Gaussian noise: <strong>z ~ N(0, I)</strong>.</li>
@@ -1216,8 +1279,8 @@ elif st.session_state["nav_page"] == "About":
             </ol>
         </div>
 
-        <div class="content-card">
-            <h3 style="margin-top:0;">6. Future Scope</h3>
+        <div class="df-card">
+            <h3 style="margin-top:0; color: #172554;">6. Future Scope</h3>
             <ul style="font-size:0.92rem; color:#334155; padding-left:1.2rem;">
                 <li><strong>Convolutional CVAE (Conv-CVAE):</strong> Utilizing transposed convolutions to capture 2D spatial correlations more effectively.</li>
                 <li><strong>Diffusion Models:</strong> Applying Denoising Diffusion Probabilistic Models (DDPM) for higher-resolution character synthesis.</li>

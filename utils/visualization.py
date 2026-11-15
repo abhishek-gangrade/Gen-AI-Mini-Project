@@ -166,89 +166,99 @@ def plot_training_history(history: Dict[str, List[float]]) -> plt.Figure:
     """
     epochs = list(range(1, len(history.get("train_total_loss", [])) + 1))
 
-    fig, axes = plt.subplots(1, 3, figsize=(16, 4.5), facecolor="#F8FAFC")
+    fig, axes = plt.subplots(1, 3, figsize=(16, 4.5), facecolor="#FFFFFF")
 
-    # Styling colors
-    color_primary = "#4F46E5"    # Indigo
+    # Vibrant, high-contrast palette
+    color_primary = "#5145E5"    # Vibrant Indigo
     color_secondary = "#06B6D4"  # Cyan
-    color_accent = "#8B5CF6"     # Purple
-    color_validation = "#F43F5E" # Rose
+    color_kl = "#16A34A"         # Emerald Green
+    color_val = "#F59E0B"        # Amber Highlight
+    heading_color = "#172554"    # Deep Navy
+    text_color = "#334155"       # Slate
+    border_color = "#E2E8F0"
+
+    for ax in axes:
+        ax.set_facecolor("#FFFFFF")
+        for spine in ax.spines.values():
+            spine.set_color(border_color)
+            spine.set_linewidth(1.0)
+        ax.tick_params(colors=text_color, labelsize=9)
 
     # 1. Total Loss
     axes[0].plot(
         epochs,
         history.get("train_total_loss", []),
-        label="Train Total Loss",
+        label="Train Total",
         color=color_primary,
-        linewidth=2,
+        linewidth=2.2,
     )
     if "val_total_loss" in history and history["val_total_loss"]:
         axes[0].plot(
             epochs,
             history["val_total_loss"],
-            label="Val Total Loss",
-            color=color_validation,
+            label="Val Total",
+            color=color_val,
             linestyle="--",
-            linewidth=2,
+            linewidth=2.0,
         )
-    axes[0].set_title("Total CVAE Loss", fontsize=11, fontweight="bold", color="#1E293B")
-    axes[0].set_xlabel("Epoch", fontsize=10, color="#475569")
-    axes[0].set_ylabel("Loss / Sample", fontsize=10, color="#475569")
-    axes[0].grid(True, linestyle=":", alpha=0.6)
-    axes[0].legend(frameon=True, facecolor="white", edgecolor="#CBD5E1")
+    axes[0].set_title("Total CVAE Loss", fontsize=11, fontweight="bold", color=heading_color)
+    axes[0].set_xlabel("Epoch", fontsize=10, color=text_color, fontweight="500")
+    axes[0].set_ylabel("Loss / Sample", fontsize=10, color=text_color, fontweight="500")
+    axes[0].grid(True, linestyle=":", alpha=0.8, color=border_color)
+    axes[0].legend(frameon=True, facecolor="#FFFFFF", edgecolor=border_color, labelcolor=text_color)
 
     # 2. Reconstruction Loss
     axes[1].plot(
         epochs,
         history.get("train_recon_loss", []),
-        label="Train Recon Loss (BCE)",
+        label="Train Recon (BCE)",
         color=color_secondary,
-        linewidth=2,
+        linewidth=2.2,
     )
     if "val_recon_loss" in history and history["val_recon_loss"]:
         axes[1].plot(
             epochs,
             history["val_recon_loss"],
-            label="Val Recon Loss",
-            color=color_validation,
+            label="Val Recon",
+            color=color_val,
             linestyle="--",
-            linewidth=2,
+            linewidth=2.0,
         )
-    axes[1].set_title("Reconstruction Loss (BCE)", fontsize=11, fontweight="bold", color="#1E293B")
-    axes[1].set_xlabel("Epoch", fontsize=10, color="#475569")
-    axes[1].set_ylabel("BCE Loss / Sample", fontsize=10, color="#475569")
-    axes[1].grid(True, linestyle=":", alpha=0.6)
-    axes[1].legend(frameon=True, facecolor="white", edgecolor="#CBD5E1")
+    axes[1].set_title("Reconstruction Loss (BCE)", fontsize=11, fontweight="bold", color=heading_color)
+    axes[1].set_xlabel("Epoch", fontsize=10, color=text_color, fontweight="500")
+    axes[1].set_ylabel("BCE Loss / Sample", fontsize=10, color=text_color, fontweight="500")
+    axes[1].grid(True, linestyle=":", alpha=0.8, color=border_color)
+    axes[1].legend(frameon=True, facecolor="#FFFFFF", edgecolor=border_color, labelcolor=text_color)
 
     # 3. KL Divergence
     axes[2].plot(
         epochs,
         history.get("train_kl_loss", []),
         label="Train KL Divergence",
-        color=color_accent,
-        linewidth=2,
+        color=color_kl,
+        linewidth=2.2,
     )
     if "val_kl_loss" in history and history["val_kl_loss"]:
         axes[2].plot(
             epochs,
             history["val_kl_loss"],
-            label="Val KL Divergence",
-            color=color_validation,
+            label="Val KL",
+            color=color_val,
             linestyle="--",
-            linewidth=2,
+            linewidth=2.0,
         )
-    axes[2].set_title("KL Divergence", fontsize=11, fontweight="bold", color="#1E293B")
-    axes[2].set_xlabel("Epoch", fontsize=10, color="#475569")
-    axes[2].set_ylabel("KL Loss / Sample", fontsize=10, color="#475569")
-    axes[2].grid(True, linestyle=":", alpha=0.6)
-    axes[2].legend(frameon=True, facecolor="white", edgecolor="#CBD5E1")
+    axes[2].set_title("KL Divergence", fontsize=11, fontweight="bold", color=heading_color)
+    axes[2].set_xlabel("Epoch", fontsize=10, color=text_color, fontweight="500")
+    axes[2].set_ylabel("KL Loss / Sample", fontsize=10, color=text_color, fontweight="500")
+    axes[2].grid(True, linestyle=":", alpha=0.8, color=border_color)
+    axes[2].legend(frameon=True, facecolor="#FFFFFF", edgecolor=border_color, labelcolor=text_color)
 
     fig.suptitle(
-        "DigitForge CVAE Training Progression and Convergence",
+        "DigiForge CVAE Training Progression & Convergence",
         fontsize=13,
         fontweight="bold",
-        color="#1E293B",
-        y=1.03,
+        color=heading_color,
+        y=1.02,
     )
     plt.tight_layout()
     return fig
