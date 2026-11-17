@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="resolveBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#312E81" />
+      <stop offset="45%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="rStrokeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F1F5F9" />
+    </linearGradient>
+    <linearGradient id="sparkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67E8F9" />
+      <stop offset="100%" stop-color="#FFFFFF" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#312E81" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Background squircle -->
+  <rect width="100" height="100" rx="26" fill="url(#resolveBgGrad)" filter="url(#shadow)" />
+
+  <!-- Subtle inner tech accent ring -->
+  <rect x="5" y="5" width="90" height="90" rx="22" fill="none" stroke="#FFFFFF" stroke-opacity="0.12" stroke-width="1.5" />
+
+  <!-- Stylized Geometric "R" (Resolve) -->
+  <!-- Stem -->
+  <rect x="23" y="24" width="11" height="52" rx="5.5" fill="url(#rStrokeGrad)" />
+
+  <!-- Upper Loop -->
+  <path d="M 32 24 
+           H 54 
+           C 68 24, 76 33, 76 43 
+           C 76 53, 68 60, 54 60 
+           H 32" 
+        fill="none" 
+        stroke="url(#rStrokeGrad)" 
+        stroke-width="11" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- Dynamic Resolution Kick / Forward Surge -->
+  <path d="M 47 52 
+           C 54 52, 60 59, 64 66 
+           L 71 76" 
+        fill="none" 
+        stroke="url(#rStrokeGrad)" 
+        stroke-width="11" 
+        stroke-linecap="round" />
+
+  <!-- AI Intelligence Core Spark (Top-right of the loop) -->
+  <path d="M 54 36 
+           Q 54 44 46 44 
+           Q 54 44 54 52 
+           Q 54 44 62 44 
+           Q 54 44 54 36 Z" 
+        fill="url(#sparkGrad)" />
+
+  <!-- Center spark light point -->
+  <circle cx="54" cy="44" r="2.2" fill="#FFFFFF" />
+</svg>
