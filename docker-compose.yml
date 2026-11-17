@@ -1,0 +1,73 @@
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: resolveai-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - resolveai-network
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: resolveai-ai-service
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+      - AI_SERVICE_SECRET=resolveai_internal_secret_key_2026
+      - LLM_PROVIDER=local
+      - CHROMA_PERSIST_DIR=/app/data/chroma
+    volumes:
+      - chroma-data:/app/data/chroma
+    networks:
+      - resolveai-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: resolveai-backend
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/resolveai
+      - JWT_SECRET=resolveai_super_secret_jwt_key_2026
+      - AI_SERVICE_URL=http://ai-service:8000
+      - AI_SERVICE_SECRET=resolveai_internal_secret_key_2026
+      - FRONTEND_URL=http://localhost
+    depends_on:
+      - mongodb
+      - ai-service
+    networks:
+      - resolveai-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: resolveai-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - resolveai-network
+
+volumes:
+  mongo-data:
+  chroma-data:
+
+networks:
+  resolveai-network:
+    driver: bridge
